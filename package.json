@@ -1,0 +1,19 @@
+{
+  "name": "audio-processing",
+  "version": "0.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.chrisklink.com:experiments/audio-input.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "digitalsignals": "~1.0.0",
+    "histogramjs": "0.0.1"
+  }
+}
