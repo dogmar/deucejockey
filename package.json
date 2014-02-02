@@ -14,6 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "digitalsignals": "~1.0.0",
-    "histogramjs": "0.0.1"
+    "histogramjs": "0.0.1",
+    "node-core-audio": "~0.3.9",
+    "johnny-five": "~0.7.15"
   }
 }
