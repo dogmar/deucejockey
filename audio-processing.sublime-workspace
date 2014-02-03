@@ -1,0 +1,354 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "main.js",
+			"settings":
+			{
+				"buffer_size": 2410,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 375.0,
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"package",
+				"Preferences: Browse Packages"
+			]
+		],
+		"width": 462.0
+	},
+	"console":
+	{
+		"height": 155.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/chrisklink/Dropbox/wooly/src/compiled/demos/renderer/ThreeJSRenderer.js",
+		"/Users/chrisklink/Movies/The Wolf of Wall Street 2013 DVDSCR X264 AAC-COBRA/Uploaded by TheKing.txt",
+		"/Users/chrisklink/Dropbox/wooly/src/compiled/demos/Demo.js",
+		"/Users/chrisklink/Dropbox/dev/audio-processing/node_modules/gulp/gulpfile.js",
+		"/Users/chrisklink/Projects/node-ardx/code/stepper.js",
+		"/Users/chrisklink/Dropbox/wooly/src/.gitignore",
+		"/Users/chrisklink/Sites/hpcloud/hp-cloud-contest/node_modules/docpad-plugin-stylus/package.json",
+		"/Users/chrisklink/Sites/hpcloud/hp-cloud-contest/package.json",
+		"/Users/chrisklink/Sites/hpcloud/hp-cloud-contest/src/documents/styles/style.css.styl",
+		"/Users/chrisklink/Dropbox/work/levis-pitch/site_src/app/index.html",
+		"/Users/chrisklink/Dropbox/work/levis-pitch/site_src/dist/styles/main.css",
+		"/Users/chrisklink/Dropbox/work/levis-pitch/new_src/package.json",
+		"/Users/chrisklink/Dropbox/work/levis-pitch/new_src/Gruntfile.js",
+		"/Users/chrisklink/Dropbox/work/test-compass/package.json",
+		"/Users/chrisklink/Dropbox/dotfiles/.zshrc",
+		"/Users/chrisklink/Dropbox/work/levis-pitch/site_src/app/styles/main.scss",
+		"/Users/chrisklink/Dropbox/work/levis-pitch/site_src/Gruntfile.js",
+		"/Users/chrisklink/Sites/new_pitch_home/dev/docpad.coffee",
+		"/Users/chrisklink/Sites/new_pitch_home/dev/.bowerrc",
+		"/Users/chrisklink/Sites/new_pitch_home/dev/node_modules/docpad-plugin-marked/node_modules/marked/lib/marked.js",
+		"/Users/chrisklink/Sites/new_pitch_home/dev/package.json",
+		"/Users/chrisklink/Sites/new_pitch_home/dev/bower_components/almond/.bower.json",
+		"/Users/chrisklink/Sites/new_pitch_home/dev/src/documents/work.html.jade",
+		"/Users/chrisklink/Sites/new_pitch_home/dev/src/documents/index.html.jade",
+		"/Users/chrisklink/Sites/new_pitch_home/test1/src/documents/index.html.jade",
+		"/Users/chrisklink/Sites/new_pitch_home/kitchensink.docpad/src/documents/index.html",
+		"/Users/chrisklink/Sites/new_pitch_home/dev/node_modules/docpad/out/lib/docpad.js",
+		"/Users/chrisklink/Sites/new_pitch_home/dev/node_modules/docpad/node_modules/safeps/out/lib/safeps.js",
+		"/Users/chrisklink/Sites/new_pitch_home/dev/pitch-site-skeleton.sublime-project",
+		"/Users/chrisklink/Sites/new_pitch_home/kitchensink.docpad/src/documents/styles/style.css.styl",
+		"/Users/chrisklink/Sites/new_pitch_home/dev/src/documents/projects/simcity-labm.html.md",
+		"/Users/chrisklink/Library/Application Support/Sublime Text 2/Packages/Emmet/Emmet.sublime-settings"
+	],
+	"find":
+	{
+		"height": 37.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"pspeed",
+			"stepBitches()",
+			"renderWidth",
+			"simWidth",
+			"this.settings.sim",
+			"scene",
+			"scene.",
+			"makeBGMesh",
+			"bgWidth",
+			"this.bgMaterial",
+			"renderer",
+			"changeBG",
+			"renderer",
+			"init",
+			"bgTexture.offset",
+			"visco",
+			"magnetStrengthMult",
+			":hover",
+			"console.log",
+			"pointer",
+			"console.log",
+			"elt",
+			"console.log",
+			"getRel",
+			"register here",
+			"repository",
+			"jeet",
+			"lancia",
+			"ypsi",
+			"Yps",
+			"Toys",
+			"<h5",
+			"<h",
+			"<h5",
+			".page-panel",
+			"24px",
+			".five-up",
+			"five-up",
+			"rel=",
+			"afterLoad",
+			"rel=\"gallery1\"",
+			"rel=\"case-studies\"",
+			"compass",
+			"h1{font-size:24px",
+			"	<div class=\"row spaced-two\">\n",
+			"Altoids",
+			"&#x2019;",
+			"<span class=\"description\"></span>",
+			"					<span class=\"description\"></span>\n					<span class=\"description\"></span>\n<span",
+			"					<span class=\"description\"></span>\n					<span class=\"description\"></span>\n<span class=\"description\"></span>",
+			"Rafa",
+			"’",
+			"Top 8 Clients",
+			"cummi",
+			"cummis",
+			"’",
+			"Spring",
+			"<h5>Type</h5>",
+			"Person 4",
+			"Person 3",
+			"Person 2",
+			"Person 1",
+			"scss",
+			"copy",
+			"bower",
+			"ul",
+			"40",
+			"exited with a non-zero status code",
+			"an error occurred",
+			"renderFiles",
+			"font"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"target",
+			"rel=\"gallery\"",
+			"rel=\"gallery1\"",
+			"h1{font-size:34px",
+			"&rsquo;",
+			"<!--<span class=\"description\"></span>-->",
+			"&rsquo;",
+			"Clients",
+			"&rsquo;",
+			"<!--<h5>Type</h5>-->",
+			"Springer",
+			"Scelzo",
+			"Cummins",
+			"Anto"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "main.js",
+					"settings":
+					{
+						"buffer_size": 2410,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								407,
+								407
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 36.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 120.0
+	},
+	"replace":
+	{
+		"height": 178.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"demo",
+				"compiled/demos/Demo.js"
+			],
+			[
+				"renderer",
+				"compiled/demos/renderer/ThreeJSRenderer.js"
+			],
+			[
+				"wooly",
+				"compiled/demos/Wooly.js"
+			],
+			[
+				"index",
+				"index.html"
+			],
+			[
+				"package",
+				"package.json"
+			],
+			[
+				"help",
+				"src/documents/help.html.eco"
+			],
+			[
+				"default",
+				"src/layouts/default.html.eco"
+			],
+			[
+				"styl",
+				"src/documents/styles/style.css.styl"
+			],
+			[
+				"style",
+				"src/documents/styles/style.css.styl"
+			],
+			[
+				"main.scss",
+				"app/styles/main.scss"
+			],
+			[
+				"main.",
+				"app/scripts/main.js"
+			],
+			[
+				"main.s",
+				"app/styles/main.scss"
+			],
+			[
+				"grun",
+				"Gruntfile.js"
+			],
+			[
+				".git",
+				".gitignore"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 182.0,
+	"status_bar_visible": true
+}

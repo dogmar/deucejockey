@@ -16,6 +16,23 @@
     "digitalsignals": "~1.0.0",
     "histogramjs": "0.0.1",
     "node-core-audio": "~0.3.9",
-    "johnny-five": "~0.7.15"
+    "johnny-five": "~0.7.15",
+    "socket.io": "~0.9.16",
+    "jade": "~1.1.5",
+    "stylus": "~0.42.2",
+    "nib": "~1.0.2",
+    "autoprefixer-stylus": "0.0.3",
+    "express": "~3.4.8"
+  },
+  "devDependencies": {
+    "gulp": "~3.5.0",
+    "gulp-jade": "~0.4.0",
+    "gulp-stylus": "0.0.11",
+    "gulp-autoprefixer": "0.0.6",
+    "autoprefixer-stylus": "0.0.3",
+    "gulp-util": "~2.2.13",
+    "underscore": "~1.5.2",
+    "gulp-clean": "~0.2.4",
+    "gulp-if": "0.0.4"
   }
 }
