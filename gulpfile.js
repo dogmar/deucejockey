@@ -8,20 +8,26 @@ var gulp = require('gulp'),
 	gjade = require('gulp-jade'),
 	gclean = require('gulp-clean'),
 	gulpif = require('gulp-if'),
+	gfilter = require('gulp-filter'),
+	gjshint = require('gulp-jshint'),
+	gnodemon = require('gulp-nodemon'),
+	sys = require('sys'),
+	cp = require('child_process'),
 	_ = require('underscore');
 
 var testFiles = 'test/*.js';
 var codeFiles = ['./*.js', './lib/*.js', testFiles];
+var serverProcess = null;
 
 // Sources path
 var paths = {
 	static: {
 		in: './src/static/',
-		out: './server/static/'
+		out: './built/static/'
 	},
-	node: {
-		in: './src/*.{js}',
-		out: './server/'
+	nodeapp: {
+		in: './src/**/*',
+		out: './built/'
 	}
 };
 paths = _.extend(paths, {
@@ -42,58 +48,67 @@ paths = _.extend(paths, {
 
 gulp.task('styles', function() {
 	return gulp.src(paths.styles.in)
-		.pipe(gulpif('*.styl', gstylus({use: ['nib']}))
+		.pipe(gulpif('**/*.styl', gstylus({use: ['nib']})))
 		.pipe(gautoprefixer('last 2 version', 'ie 9'))
 		.pipe(gulp.dest(paths.styles.out));
 });
 
-var pagesOutStr = gutil.combine(
-	gulp.dest(paths.pages.out)
-);
-
 gulp.task('pages', function() {
 	return gulp.src(paths.pages.in)
-		.pipe(gulpif('*.jade', gjade()))
-		.pipe(pagesOutStr());
+		.pipe(gulpif('**/*.jade', gjade()))
+		.pipe(gulp.dest(paths.pages.out));
 });
 
-
-gulp.task('node', function() {
-	return gulp.src(paths.node.in)
-		.pipe(gulp.dest('./server/'));
+gulp.task('clean', function() {
+	return gulp.src(paths.nodeapp.out + '*')
+		.pipe(gclean());
 });
 
-gulp.task('server', ['node'], function(cb) {
-	require(paths.node.out + 'main');
+gulp.task('nodeapp', function() {
+	return gulp.src(paths.nodeapp.in)
+		.pipe(gfilter('!**/static/**/*'))
+		.pipe(gjshint())
+		.pipe(gulp.dest(paths.nodeapp.out));
+});
 
+gulp.task('server', ['preprocess'], function(cb) {
+	// gnodemon({ 
+	// 	script: './built/main.js'
+	// 	// options: '-e html,js -i ignored.js'
+	// });
+	console.log('server');
+	if (serverProcess) {
+		console.log('killkillkill!');
+		serverProcess.removeListener('exit', onExit);
+		serverProcess.kill();
+	}
+	serverProcess = cp.spawn('node', ['./built/main.js'], {stdio: 'inherit'});
+	serverProcess.addListener('exit', onExit);
 	cb();
 });
 
+function onExit(e) {
+	console.log('exit – code:', e.code, 'signal:', e.signal);
+	process.exit();
+}
 
-var coffee = require('gulp-coffee');
-
-gulp.task('coffee', function() {
-	gulp.src('./src/*.coffee')
-		.pipe(coffee({bare: true}).on('error', gutil.log))
-		.pipe(gulp.dest('./public/'))
-});
-
-
-// DEFAULT TASK
-gulp.task('preprocess', ['node', 'styles', 'pages'], function(cb) {
+gulp.task('preprocess', ['nodeapp', 'styles', 'pages'], function(cb) {
 	gulp.watch(paths.styles.in, function() {
 		gulp.run('styles');
 	});
 	gulp.watch(paths.pages.in, function() {
-		gulp.run('pages')
+		gulp.run('pages');
 	});
-	gulp.watch(paths.node.in);
+	gulp.watch(paths.nodeapp.in, function() {
+		gulp.run('server');
+	});
 
 	cb();
 });
 
-gulp.task('post', function() {
-	require()
-});
 
-gulp.task('default', ['preprocess', 'server']);
+gulp.task('default', ['clean'], function() {
+	gulp.run('preprocess');
+	console.log('about to start server');
+	gulp.run('server');
+});
