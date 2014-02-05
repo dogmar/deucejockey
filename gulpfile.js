@@ -203,7 +203,7 @@ gulp.task('server', function(cb) {
 		serverProcess.removeListener('exit', onExit);
 		serverProcess.kill();
 	}
-	serverProcess = cp.spawn('node', ['./built/main.js'], {stdio: 'inherit'});
+	serverProcess = cp.spawn('node', [join(cfg.buildDir, cfg.serverEntry)], {stdio: 'inherit'});
 	serverProcess.addListener('exit', onExit);
 	cb();
 });

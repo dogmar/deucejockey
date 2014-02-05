@@ -21,11 +21,13 @@ var join = require('path').join,
 	indexFile = join(staticDir,'index.html'),
 	jsDir = join(staticDir,'scripts'),
 	cssDir = join(staticDir,'style'),
-	assetsDir = join(staticDir,'assets');
+	assetsDir = join(staticDir,'assets'),
+	serverEntry = 'main.js'
 
 module.exports = {
 	buildDir: buildDir,
 	compileDir: compileDir,
+	serverEntry: serverEntry,
 	
 	// Relative paths to core files and folders for input and output
 	indexFile: indexFile,
