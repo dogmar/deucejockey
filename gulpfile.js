@@ -2,26 +2,34 @@
 
 // TODO: figure out the best way to make gulp a dep of itself
 var gulp = require('gulp'),
-	gutil = require('gulp-util'),
-	stylus = require('gulp-stylus'),
 	autoprefixer = require('gulp-autoprefixer'),
-	gjade = require('gulp-jade'),
-	gclean = require('gulp-clean'),
-	gulpif = require('gulp-if'),
-	gfilter = require('gulp-filter'),
-	jshint = require('gulp-jshint'),
-	// stylish = require('jshint-stylish'),
-	gnodemon = require('gulp-nodemon'),
-	plumber = require('gulp-plumber'),
-	ngHtml2js = require('gulp-ng-html2js'),
-	lazypipe = require('lazypipe'),
-	runSequence = require('run-sequence'),
-
-	join = require('path').join,
+	concat = require('gulp-concat'),
 	csso = require('gulp-csso'),
-	sys = require('sys'),
+	util = require('gulp-util'),
+	jade = require('gulp-jade'),
+	clean = require('gulp-clean'),
+	filter = require('gulp-filter'),
+	footer = require('gulp-footer'),
+	gulpif = require('gulp-if'),
+	gzip = require('gulp-gzip'),
+	header = require('gulp-header'),
+	jshint = require('gulp-jshint'),
+	minifyHtml = require('gulp-minify-html'),
+	ngHtml2js = require('gulp-ng-html2js'),
+	ngmin = require('gulp-ngmin'),
+	plumber = require('gulp-plumber'),
+	rev = require('gulp-rev'),
+	runSequence = require('run-sequence'),
+	stylus = require('gulp-stylus'),
+	uglify = require('gulp-uglify'),
+
+	_ = require('underscore'),
 	cp = require('child_process'),
-	_ = require('underscore');
+	es = require('event-stream'),
+	fs = require('fs'),
+	join = require('path').join,
+	lazypipe = require('lazypipe'),
+	sys = require('sys');
 
 var testFiles = 'test/*.js';
 var codeFiles = ['./*.js', './lib/*.js', testFiles];
@@ -35,38 +43,30 @@ var concatName = cfg.pkg.name;
 
 
 
-// Sources path
-var paths = {
-	static: {
-		in: './src/static/',
-		out: './built/static/'
+function readFile(filename) {
+	return fs.existsSync(filename) ? fs.readFileSync(filename, {encoding: 'utf8'}) : '';
+}
+
+
+//---------------------------------------------
+// Server preprocessing
+//---------------------------------------------
+
+var serverFiles = function() {
+		return gulp.src(cfg.appFiles.jsServer);
 	},
-	nodeapp: {
-		in: './src/**/*',
-		out: './built/'
-	}
-};
-paths = _.extend(paths, {
-	styles: {
-		in: paths.static.in + 'style/**/*.{css,styl}',
-		out: paths.static.out + 'style/'
-	},
-	pages: {
-		in: paths.static.in + '**/*.{html,htm,jade}',
-		out: paths.static.out + ''
-	},
-	scripts: {
-		in: paths.static.in + 'scripts/**/*.{js}',
-		out: paths.static.out + 'scripts/'
-	}
+	serverBaseTasks = lazypipe()
+		              .pipe(plumber)  // jshint won't render parse errors without plumber 
+		              .pipe(function() {
+		              	return jshint(_.extend({}, cfg.taskOptions.jshint, cfg.taskOptions.jshintServer));
+		              })
+		              .pipe(jshint.reporter, 'jshint-stylish'),
+	serverBuildTasks = serverBaseTasks
+	                   .pipe(gulp.dest, join(cfg.buildDir));
+
+gulp.task('build-server', function() {
+	return serverFiles().pipe(serverBuildTasks());
 });
-
-
-
-
-
-
-
 
 //---------------------------------------------
 // JavaScript
@@ -192,7 +192,7 @@ gulp.task('pages', function() {
 
 gulp.task('clean', function() {
 	return gulp.src(paths.nodeapp.out + '*')
-		.pipe(gclean());
+		.pipe(clean());
 });
 
 gulp.task('nodeapp', function() {
@@ -225,5 +225,5 @@ function onExit(e) {
 
 
 gulp.task('default', function() {
-	runSequence('clean', ['build-styles', 'build-scripts'], 'server');
+	runSequence('clean', ['build-styles', 'build-scripts', 'build-server'], 'server');
 });
