@@ -13,9 +13,6 @@ var express = require('express'),
 	  io = require('socket.io'),
 	  server = require('http'),
 	  jade = require('jade'),
-	  stylus = require('stylus'),
-	  nib = require('nib'),
-	  prefixer = require('autoprefixer-stylus'),
 	  io = require('socket.io'),
 	  app = express();
 

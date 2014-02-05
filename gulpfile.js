@@ -184,22 +184,9 @@ gulp.task('compile-styles', function() {
 });
 
 
-gulp.task('pages', function() {
-	return gulp.src(paths.pages.in)
-		.pipe(gulpif('**/*.jade', gjade()))
-		.pipe(gulp.dest(paths.pages.out));
-});
-
 gulp.task('clean', function() {
-	return gulp.src(paths.nodeapp.out + '*')
+	return gulp.src([cfg.buildDir, cfg.compileDir])
 		.pipe(clean());
-});
-
-gulp.task('nodeapp', function() {
-	// return gulp.src(paths.nodeapp.in)
-	// 	.pipe(gfilter('!**/static/**/*'))
-	// 	.pipe(gulpif('**/*.js', jshint()))
-	// 	.pipe(gulp.dest(paths.nodeapp.out));
 });
 
 gulp.task('bower', function() {
