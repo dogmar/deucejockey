@@ -20,7 +20,9 @@ var gulp = require('gulp'),
 	plumber = require('gulp-plumber'),
 	rev = require('gulp-rev'),
 	runSequence = require('run-sequence'),
+	stripDebug = require('gulp-strip-debug'),
 	stylus = require('gulp-stylus'),
+	watch = require('gulp-watch'),
 	uglify = require('gulp-uglify'),
 
 	_ = require('underscore'),
@@ -126,6 +128,7 @@ gulp.task('compile-scripts', function() {
 	
 	return es.concat.apply(es, files)
 					.pipe(concat(concatName + '.js'))
+					.pipe(stripDebug())
 					.pipe(uglify(cfg.taskOptions.uglify))
 					.pipe(rev())
 					.pipe(gulp.dest(join(cfg.compileDir, cfg.jsDir)))
@@ -141,9 +144,9 @@ gulp.task('compile-scripts', function() {
 //---------------------------------------------
 // Less / CSS Styles
 //---------------------------------------------
-
+var stylesSrc = [cfg.appFiles.css, cfg.appFiles.stylus, cfg.appFiles.less]
 var styleFiles = function() { 
-		return gulp.src([cfg.appFiles.css, cfg.appFiles.stylus, cfg.appFiles.less]); 
+		return gulp.src(stylesSrc); 
 	},
 	styleBaseTasks = lazypipe()
 		// .pipe(recess, cfg.taskOptions.recess)
@@ -213,4 +216,40 @@ function onExit(e) {
 
 gulp.task('default', function() {
 	runSequence('clean', ['build-styles', 'build-scripts', 'build-server'], 'server');
+});
+
+gulp.task('default', ['watch']);
+
+gulp.task('build', function(cb) {
+	runSequence('clean', ['build-styles', 'build-scripts', 'build-server'], cb);
+});
+
+gulp.task('watch', function() {
+	runSequence('build', 'server');
+	watch({glob: cfg.watchFiles.js, emitOnGlob: false, name: 'JS'})
+		.pipe(plumber())
+		.pipe(jsBuildTasks());
+		// .pipe(livereload(server));
+	watch({glob: cfg.watchFiles.server, emitOnGlob: false, name: 'Server'})
+		.pipe(plumber())
+		.pipe(serverBuildTasks());
+
+
+	// watch({glob: cfg.watchFiles.tpl, emitOnGlob: false, name: 'Templates'})
+	// 				.pipe(plumber())
+	// 				.pipe(tplBuildTasks())
+	// 				.pipe(livereload(server));
+
+	// watch({glob: cfg.watchFiles.html, emitOnGlob: false, name: 'HTML'}, function() {
+	// 	return buildHTML();
+	// });
+	
+	watch({glob: cfg.watchFiles.styles, emitOnGlob: false, name: 'Styles'}, function() {
+		// run this way to ensure that a failed pipe doesn't break the watcher.
+		console.log('change');
+		return buildStyles();
+	});
+	
+	watch({glob: cfg.watchFiles.assets, emitOnGlob: false, name: 'Assets'})
+		.pipe(gulp.dest(join(cfg.buildDir, cfg.assetsDir)));
 });

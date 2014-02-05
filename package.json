@@ -47,6 +47,8 @@
     "gulp-footer": "~1.0.3",
     "gulp-minify-html": "~0.1.0",
     "event-stream": "~3.1.0",
-    "gulp-gzip": "0.0.4"
+    "gulp-gzip": "0.0.4",
+    "gulp-strip-debug": "~0.1.1",
+    "gulp-watch": "~0.5.0"
   }
 }

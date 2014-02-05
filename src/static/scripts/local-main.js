@@ -1,3 +1,4 @@
 (function() {
-	alert('blah');
+	console.log('blah');
+	alert.log('blah');
 })();

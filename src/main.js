@@ -10,36 +10,35 @@
 // });
 
 var express = require('express'),
-	  io = require('socket.io'),
-	  server = require('http'),
-	  jade = require('jade'),
-	  io = require('socket.io'),
+	  // server = require('http'),
+	  // jade = require('jade'),
+	  // io = require('socket.io'),
 	  app = express();
 
 console.log('running from:', process.cwd());
 app.use('/', express.static(__dirname + '/static'));
 app.get('/', function(req, res) {
-  res.send('hello world');
+	res.send('hello world');
 });
 
 app.listen(3000);
 
 app.set('views', __dirname + '/tpl');
-app.set('view engine', "jade");
+app.set('view engine', 'jade');
 app.engine('jade', require('jade').__express);
-app.get("/", function(req, res){
-    res.render("page");
+app.get('/', function(req, res){
+	res.render('page');
 });
 
 
-var five = require("johnny-five"),
+var five = require('johnny-five'),
 	board = new five.Board();
 board.addListener('error', function(e) {
 	console.log(e.message);
 });
 var pFwd, pRev, pSpeed = 3;
 
-board.on("ready", function() {
+board.on('ready', function() {
 	console.log('board ready');
 
 	pFwd = new five.Pin(4);

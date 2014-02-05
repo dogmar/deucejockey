@@ -63,13 +63,11 @@ module.exports = {
 		csso: false, // set to true to prevent structural modifications
 		jshint: {
 			"bitwise": true,
-			// "browser": true,
 			"devel": true,
 			"camelcase": true,
 			"curly": true,
 			"eqeqeq": true,
 			"eqnull": true,
-			"es3": true,
 			"forin": true,
 			"immed": true,
 			"indent": 2,
@@ -83,11 +81,11 @@ module.exports = {
 			"undef": true,
 			"unused": true
 		},
-		jshintNode: {
+		jshintServer: {
 			"node": true,
-			"es5": true
 		},
 		jshintBrowser: {
+			"es3": true,
 			"browser": true
 		},
 		less: {},
@@ -144,21 +142,25 @@ module.exports = {
 	 * for live build and reloading.
 	 */
 	watchFiles: {
+		server: [
+			join(srcDir, '*')
+		],
 		js: [
-			join(srcDir, '**/*.js'),
-			'!'+join(srcDir,'/**/*.spec.js'),
-			'!'+join(srcDir,'/assets/**/*'),
-			'!'+join(bowerrc.directory, '**/*')
+			join(srcDir, jsDir, '**/*.js')
 		],
 		//jsunit: [ srcDir+'/**/*.spec.js' ], // watch is handled by the karma plugin!
 		tpl: [
 			srcDir+'/app/**/*.tpl.html',
 			srcDir+'/common/**/*.tpl.html'
 		],
-		
-		html: [ join(buildDir, '**/*'), '!'+join(buildDir,indexFile), join('src',indexFile) ],
-		less: [ srcDir+'/**/*.less' ],
-		stylus: [ srcDir+'/**/*.styl' ],
+		html: [ 
+			join(buildDir, '**/*'), 
+			'!'+join(buildDir,indexFile), 
+			join('src',indexFile) 
+		],
+		styles: [ 
+			join(srcDir, cssDir, '**/*.{styl,css,less}')
+		],
 		assets: join('src',assetsDir,'**/*.*')
 	},
 

@@ -23,7 +23,7 @@ function processAudio( inputBuffer ) {
 	}
 	// console.log('rate:'+mic.rate);
 
-	if (!fft || inputBuffer.rate != rate || inputBuffer.length != sampleLength) {
+	if (!fft || inputBuffer.rate !== rate || inputBuffer.length !== sampleLength) {
 		// console.log('no fft');
 		rate = inputBuffer.rate;
 		sampleLength = mic.length;
@@ -37,21 +37,22 @@ function processAudio( inputBuffer ) {
 		// console.log('bin['+i+']: ' + bins[i]);
 	}
 
-	module.exports.emit('update', {intensity: bins[0]})
+	module.exports.emit('update', {intensity: bins[0]});
 
 	// return inputBuffer;
 }
 
 function binData(array, bins) {
-	var len = array.length;
-	var i = 0, j = 0;
-	var binSize = len / bins;
-	binArray = new Float32Array(bins);
-	for (var i = 0; i < binArray.length; ++i) {
+	var len = array.length,
+		i = 0,
+		j = 0,
+		binSize = len / bins,
+		binArray = new Float32Array(bins);
+	for (i = 0; i < binArray.length; ++i) {
 		binArray[i] = 0;
 	}
 
-	for (var i = 0; i < len; ++i) {
+	for (i = 0; i < len; ++i) {
 		j = Math.floor(i / binSize);
 		binArray[j] += array[i];
 	}
