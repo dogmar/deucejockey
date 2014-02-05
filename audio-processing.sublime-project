@@ -2,8 +2,16 @@
 	"folders":
 	[
 		{
-			"path": "./", 
-			"folder_exclude_patterns": [".tmp", "node_modules", "server"]
+			"folder_exclude_patterns":
+			[
+				".tmp",
+				"node_modules",
+				"built"
+			],
+			"path": "./"
+		},
+		{
+			"path": "../johnny-five/lib"
 		}
 	]
 }

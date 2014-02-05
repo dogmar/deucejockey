@@ -1,0 +1,14 @@
+{
+  "name": "blank",
+  "version": "0.0.0",
+  "main": "",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.0",
+    "jqueryui": "~1.10.3"
+  },
+  "devDependencies": {}
+}

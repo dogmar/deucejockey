@@ -1,4 +1,13 @@
-'use strict';
+// process.on('SIGINT', function() {
+
+// 	console.log('my SIGINT');
+// 	// require('sleep').sleep(5);
+// });
+// process.on('exit', function() {
+
+// 	console.log('my exit');
+// 	// require('sleep').sleep(5);
+// });
 
 var express = require('express'),
 	  io = require('socket.io'),
@@ -7,26 +16,31 @@ var express = require('express'),
 	  stylus = require('stylus'),
 	  nib = require('nib'),
 	  prefixer = require('autoprefixer-stylus'),
+	  io = require('socket.io'),
 	  app = express();
 
 console.log('running from:', process.cwd());
-app.use('/', express.static('./static'));
+app.use('/', express.static(__dirname + '/static'));
 app.get('/', function(req, res) {
   res.send('hello world');
 });
 
 app.listen(3000);
-process.on('SIGINT', function () {
-  console.log("Closing");
-  board.analogWrite(pSpeed, 0);
-  app.close();
+
+app.set('views', __dirname + '/tpl');
+app.set('view engine', "jade");
+app.engine('jade', require('jade').__express);
+app.get("/", function(req, res){
+    res.render("page");
 });
+
 
 var five = require("johnny-five"),
 	board = new five.Board();
+board.addListener('error', function(e) {
+	console.log(e.message);
+});
 var pFwd, pRev, pSpeed = 3;
-
-console.log('what?');
 
 board.on("ready", function() {
 	console.log('board ready');
