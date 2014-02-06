@@ -3,17 +3,21 @@
 // TODO: figure out the best way to make gulp a dep of itself
 var gulp = require('gulp'),
 	autoprefixer = require('gulp-autoprefixer'),
+	bowerFiles = require('gulp-bower-files'),
 	concat = require('gulp-concat'),
 	csso = require('gulp-csso'),
-	util = require('gulp-util'),
 	jade = require('gulp-jade'),
 	clean = require('gulp-clean'),
 	filter = require('gulp-filter'),
 	footer = require('gulp-footer'),
-	gulpif = require('gulp-if'),
+	_if = require('gulp-if'),
+	gutil = require('gulp-util'),
 	gzip = require('gulp-gzip'),
 	header = require('gulp-header'),
+	inject = require('gulp-inject'),
 	jshint = require('gulp-jshint'),
+	livereload = require('gulp-livereload'),
+	livereloadEmbed = require('gulp-embedlr'),
 	minifyHtml = require('gulp-minify-html'),
 	ngHtml2js = require('gulp-ng-html2js'),
 	ngmin = require('gulp-ngmin'),
@@ -22,19 +26,22 @@ var gulp = require('gulp'),
 	runSequence = require('run-sequence'),
 	stripDebug = require('gulp-strip-debug'),
 	stylus = require('gulp-stylus'),
+	tap = require('gulp-tap'),
 	watch = require('gulp-watch'),
 	uglify = require('gulp-uglify'),
 
 	_ = require('underscore'),
+	anysort = require('anysort'),
 	cp = require('child_process'),
 	es = require('event-stream'),
 	fs = require('fs'),
-	join = require('path').join,
 	lazypipe = require('lazypipe'),
+	path = require('path'),
+	pjoin = path.join,
 	sys = require('sys');
 
-var testFiles = 'test/*.js';
-var codeFiles = ['./*.js', './lib/*.js', testFiles];
+// var testFiles = 'test/*.js';
+// var codeFiles = ['./*.js', './lib/*.js', testFiles];
 var serverProcess = null;
 
 // Load user config and package data
@@ -43,6 +50,7 @@ var cfg = require('./gulpconfig.js');
 // common variables
 var concatName = cfg.pkg.name;
 
+var embedLR = false;
 
 
 function readFile(filename) {
@@ -58,17 +66,109 @@ var serverFiles = function() {
 		return gulp.src(cfg.appFiles.jsServer);
 	},
 	serverBaseTasks = lazypipe()
-		              .pipe(plumber)  // jshint won't render parse errors without plumber 
-		              .pipe(function() {
-		              	return jshint(_.extend({}, cfg.taskOptions.jshint, cfg.taskOptions.jshintServer));
-		              })
-		              .pipe(jshint.reporter, 'jshint-stylish'),
+		                .pipe(plumber)  // jshint won't render parse errors without plumber 
+		                .pipe(function() {
+		                	return jshint(_.extend({}, cfg.taskOptions.jshint, cfg.taskOptions.jshintServer));
+		                })
+		                .pipe(jshint.reporter, 'jshint-stylish'),
 	serverBuildTasks = serverBaseTasks
-	                   .pipe(gulp.dest, join(cfg.buildDir));
+	                   .pipe(gulp.dest, pjoin(cfg.buildDir));
 
 gulp.task('build-server', function() {
 	return serverFiles().pipe(serverBuildTasks());
 });
+
+
+
+
+//---------------------------------------------
+// HTML
+//---------------------------------------------
+
+var buildHTML = function(baseDir) {
+	var src = [
+		pjoin(baseDir, cfg.staticDir, '**/*.*'),
+		'!' + pjoin(baseDir, cfg.indexFile)
+	];
+	return gulp.src(src, {read: false, base:''})
+		.pipe(plumber())
+		.pipe(inject(pjoin(baseDir, cfg.tempDir, cfg.indexFile), {
+			addRootSlash: false,
+			sort: fileSorter, // see below
+			ignorePath: pjoin('/', cfg.buildDir, cfg.staticDir, '/')
+		}))
+};
+
+var buildHTMLTemp = function() {
+	return gulp.src(cfg.appFiles.html)
+		.pipe(jade(cfg.taskOptions.jade))
+		// .on('error', function() {
+		// 	gutil.log(gutil.colors.red('Error')+' processing Less files.');
+		// });
+};
+
+var removeStatic = function(pathName) {
+	return path.relative(cfg.staticDir, pathName);
+};
+
+gulp.task('build-html-temp', function() {
+	return buildHTMLTemp()
+		.pipe(gulp.dest(pjoin(cfg.buildDir, cfg.tempDir, cfg.staticDir)));
+});
+
+gulp.task('build-html', ['build-html-temp'], function() {
+	// NOTE: this task does NOT depend on buildScripts and buildStyles,
+	// therefore, it may incorrectly create the HTML file if called
+	// directly.
+	var htmlFile = readFile(pjoin(cfg.buildDir, cfg.indexFile));
+
+	return buildHTML(cfg.buildDir)
+		// .pipe(_if(embedLR, livereloadEmbed({port: cfg.server.lrPort})))
+		.pipe(gulp.dest(pjoin(cfg.buildDir, cfg.staticDir)))
+		.pipe(tap(function(file) {
+			var newHtmlFile = file.contents.toString();
+			if(newHtmlFile !== htmlFile) {
+				console.log(newHtmlFile);
+				htmlFile = newHtmlFile;
+				console.log('index changed');
+				// gulp.src(file.path).pipe(livereload(server));
+			}
+		}));
+});
+
+gulp.task('compile-html-temp', function() {
+	return buildHTMLTemp()
+		.pipe(gulp.dest(pjoin(cfg.compileDir, cfg.tempDir, cfg.staticDir)));
+});
+
+gulp.task('compile-html', ['compile-html-temp'], function() {
+	return buildHTML(cfg.compileDir)
+		.pipe(minifyHtml({empty:true,spare:true,quotes:true}))
+		.pipe(gulp.dest(cfg.compileDir))
+		.pipe(gzip())
+		.pipe(gulp.dest(cfg.compileDir));
+});
+
+// used by build-html to ensure correct file order during builds
+var fileSorter = (function(){
+	var globList = _.flatten([
+		// JS files are sorted by original vendor order, common, app, then everything else
+		cfg.vendorFiles.js.map(function(f) { 
+			return removeStatic(pjoin(cfg.vendorDir, path.basename(f)));
+		}),
+		removeStatic(pjoin(cfg.jsDir, 'lib/**/*.js')),	   
+		removeStatic(pjoin(cfg.jsDir, 'app/**/*.js')),
+		removeStatic(pjoin(cfg.jsDir, '**/*.js')),
+	]);
+	var as = anysort(globList);
+	return function(a,b){ 
+		return as(a.filepath, b.filepath) 
+	};
+})();
+
+
+
+
 
 //---------------------------------------------
 // JavaScript
@@ -84,20 +184,20 @@ var jsFiles = function() {
 		            })
 		            .pipe(jshint.reporter, 'jshint-stylish'),
 	jsBuildTasks = jsBaseTasks
-		.pipe(gulp.dest, join(cfg.buildDir, cfg.jsDir)),
+		.pipe(gulp.dest, pjoin(cfg.buildDir, cfg.jsDir)),
 	tplFiles = function() { 
 		return gulp.src(cfg.appFiles.tpl); 
 	},
 	tplBuildTasks = lazypipe()
 		              .pipe(ngHtml2js, {moduleName: 'templates'})
-	                .pipe(gulp.dest, join(cfg.buildDir, cfg.jsDir, cfg.templatesDir));
+	                .pipe(gulp.dest, pjoin(cfg.buildDir, cfg.jsDir, cfg.templatesDir));
 
 //noinspection FunctionWithInconsistentReturnsJS
 gulp.task('build-scripts-vendor', function() {
-	// if(cfg.vendorFiles.js.length) {
-	// 	return gulp.src(cfg.vendorFiles.js, {base: cfg.vendorDir})
-	// 				.pipe(gulp.dest(join(cfg.buildDir, cfg.jsBrowsDir, cfg.vendorDir)))
-	// }
+	if(cfg.vendorFiles.js.length) {
+		return gulp.src(cfg.vendorFiles.js)
+			.pipe(gulp.dest(pjoin(cfg.buildDir, cfg.vendorDir)))
+	}
 });
 gulp.task('build-scripts-app', function() {
 	return jsFiles().pipe(jsBuildTasks());
@@ -131,9 +231,9 @@ gulp.task('compile-scripts', function() {
 					.pipe(stripDebug())
 					.pipe(uglify(cfg.taskOptions.uglify))
 					.pipe(rev())
-					.pipe(gulp.dest(join(cfg.compileDir, cfg.jsDir)))
+					.pipe(gulp.dest(pjoin(cfg.compileDir, cfg.jsDir)))
 					.pipe(gzip())
-					.pipe(gulp.dest(join(cfg.compileDir, cfg.jsDir)))
+					.pipe(gulp.dest(pjoin(cfg.compileDir, cfg.jsDir)))
 });
 
 
@@ -144,17 +244,17 @@ gulp.task('compile-scripts', function() {
 //---------------------------------------------
 // Less / CSS Styles
 //---------------------------------------------
-var stylesSrc = [cfg.appFiles.css, cfg.appFiles.stylus, cfg.appFiles.less]
+var stylesSrc = cfg.appFiles.styles
 var styleFiles = function() { 
 		return gulp.src(stylesSrc); 
 	},
 	styleBaseTasks = lazypipe()
 		// .pipe(recess, cfg.taskOptions.recess)
 		.pipe(function() {
-			return gulpif('**/*.styl', stylus(cfg.taskOptions.stylus));
+			return _if('**/*.styl', stylus(cfg.taskOptions.stylus));
 		})
 		.pipe(function() {
-			return gulpif('**/*.less', stylus(cfg.taskOptions.less));
+			return _if('**/*.less', stylus(cfg.taskOptions.less));
 		})
 		.pipe(function() {
 			return autoprefixer.apply(this, cfg.taskOptions.autoprefixer);
@@ -165,10 +265,10 @@ var styleFiles = function() {
 						styleBaseTasks()
 						// need to manually catch errors on stylus? :-(
 						.on('error', function() {
-							gutil.log(gutil.colors.red('Error')+' processing Stylus files.');
+							util.log(gutil.colors.red('Error')+' processing Stylus files.');
 						})
 					)
-					.pipe(gulp.dest(join(cfg.buildDir, cfg.cssDir)))
+					.pipe(gulp.dest(pjoin(cfg.buildDir, cfg.cssDir)))
 					// .pipe(livereload(server))
 	};
 
@@ -181,9 +281,9 @@ gulp.task('compile-styles', function() {
 					.pipe(rename(concatName + '.css'))
 					.pipe(csso(cfg.taskOptions.csso))
 					.pipe(rev())
-					.pipe(gulp.dest(join(cfg.compileDir, cfg.cssDir)))
+					.pipe(gulp.dest(pjoin(cfg.compileDir, cfg.cssDir)))
 					.pipe(gzip())
-					.pipe(gulp.dest(join(cfg.compileDir, cfg.cssDir)))
+					.pipe(gulp.dest(pjoin(cfg.compileDir, cfg.cssDir)))
 });
 
 
@@ -203,7 +303,7 @@ gulp.task('server', function(cb) {
 		serverProcess.removeListener('exit', onExit);
 		serverProcess.kill();
 	}
-	serverProcess = cp.spawn('node', [join(cfg.buildDir, cfg.serverEntry)], {stdio: 'inherit'});
+	serverProcess = cp.spawn('node', [pjoin(cfg.buildDir, cfg.serverEntry)], {stdio: 'inherit'});
 	serverProcess.addListener('exit', onExit);
 	cb();
 });
@@ -221,7 +321,7 @@ gulp.task('default', function() {
 gulp.task('default', ['watch']);
 
 gulp.task('build', function(cb) {
-	runSequence('clean', ['build-styles', 'build-scripts', 'build-server'], cb);
+	runSequence('clean', ['build-styles', 'build-scripts', 'build-server'], 'build-html', cb);
 });
 
 gulp.task('watch', function() {
@@ -251,5 +351,5 @@ gulp.task('watch', function() {
 	});
 	
 	watch({glob: cfg.watchFiles.assets, emitOnGlob: false, name: 'Assets'})
-		.pipe(gulp.dest(join(cfg.buildDir, cfg.assetsDir)));
+		.pipe(gulp.dest(pjoin(cfg.buildDir, cfg.assetsDir)));
 });

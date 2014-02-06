@@ -2,8 +2,11 @@ doctype html
 html
 	head
 		title= 'Title, bitches'
-		stuff= 'Wot?'
+		//- If this stops working make sure there's a trailing space after inject:*** lines
+		// inject:css 
+		// endinject 
+	stuff= '{{user.color}}'
 	body
 		p='This is the body'
-
-	script(src='lib/')
+		// inject:js 
+		// endinject 

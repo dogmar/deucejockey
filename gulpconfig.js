@@ -14,17 +14,20 @@ var join = require('path').join,
 	 */	
 	buildDir = 'built',
 	compileDir = 'compiled',
-	vendorDir = bowerrc.directory,
 	srcDir = 'src',
 	staticDir = 'static'
 	templatesDir = '/templates',
 	indexFile = join(staticDir,'index.html'),
 	jsDir = join(staticDir,'scripts'),
+	vendorDir = join(jsDir, 'lib'),
 	cssDir = join(staticDir,'style'),
 	assetsDir = join(staticDir,'assets'),
+	htmlDir = join(staticDir,''),
 	serverEntry = 'main.js'
+	tempDir = 'tmp'
 
 module.exports = {
+	srcDir: srcDir,
 	buildDir: buildDir,
 	compileDir: compileDir,
 	serverEntry: serverEntry,
@@ -36,6 +39,8 @@ module.exports = {
 	assetsDir: assetsDir,
 	vendorDir: vendorDir,
 	templatesDir: templatesDir,
+	tempDir: tempDir,
+	staticDir: staticDir,
 	
 	// allows settings reuse from package.json and bower.json
 	bower: bower,
@@ -63,6 +68,9 @@ module.exports = {
 	taskOptions: {
 		autoprefixer: ['last 2 version', 'ie 9'],
 		csso: false, // set to true to prevent structural modifications
+		jade: {
+			pretty: true
+		},
 		jshint: {
 			"bitwise": true,
 			"devel": true,
@@ -120,7 +128,8 @@ module.exports = {
 			'!'+join(bowerrc.directory, '**/*')
 		],
 		js: [
-			join(srcDir, jsDir, '**/*.js')
+			join(srcDir, jsDir, '**/*.js'),
+			'!'+join(srcDir, vendorDir, '**/*')
 		],
 		jsunit: [
 			join(buildDir, '/**/*.js'),
@@ -132,10 +141,13 @@ module.exports = {
 			srcDir+'/app/**/*.tpl.html',
 			srcDir+'/common/**/*.tpl.html'
 		],
-		html: join('src', indexFile),
-		less: join(srcDir, cssDir, 'main.less'),
-		stylus: join(srcDir, cssDir, 'main.styl'),
-		css: join(srcDir, cssDir, '**/*.css'),
+		html: join(srcDir, staticDir, 'index.jade'),
+		styles: [
+			join(srcDir, cssDir, '**/*.css'),
+			join(srcDir, cssDir, '**/*.styl'),
+			join(srcDir, cssDir, '**/*.less'),
+			join('!' + srcDir, cssDir, 'includes/**/*')
+		],
 		assets: join(srcDir, assetsDir, '**/*.*')
 	},
 	
@@ -193,7 +205,8 @@ module.exports = {
 	 */
 	vendorFiles: {
 		js: [
-			'vendor/angular/angular.js'
+			join(bowerrc.directory, 'backbone/backbone.js'),
+			join(bowerrc.directory, 'jquery/jquery.js')
 		],
 		assets: [
 		]
