@@ -19,8 +19,6 @@ var gulp = require('gulp'),
 	livereload = require('gulp-livereload'),
 	livereloadEmbed = require('gulp-embedlr'),
 	minifyHtml = require('gulp-minify-html'),
-	ngHtml2js = require('gulp-ng-html2js'),
-	ngmin = require('gulp-ngmin'),
 	plumber = require('gulp-plumber'),
 	rev = require('gulp-rev'),
 	runSequence = require('run-sequence'),
@@ -44,7 +42,7 @@ var gulp = require('gulp'),
 // var codeFiles = ['./*.js', './lib/*.js', testFiles];
 var serverProcess = null;
 
-// Load user config and package data
+// Load user Pig and package data
 var cfg = require('./gulpconfig.js');
 
 // common variables
@@ -157,8 +155,12 @@ var fileSorter = (function(){
 			return removeStatic(pjoin(cfg.vendorDir, path.basename(f)));
 		}),
 		removeStatic(pjoin(cfg.jsDir, 'lib/**/*.js')),	   
+		removeStatic(pjoin(cfg.jsDir, 'app/models/**/*.js')),
+		removeStatic(pjoin(cfg.jsDir, 'app/collections/**/*.js')),
+		removeStatic(pjoin(cfg.jsDir, 'app/views/**/*.js')),
+		removeStatic(pjoin(cfg.jsDir, 'routers/**/*.js')),
 		removeStatic(pjoin(cfg.jsDir, 'app/**/*.js')),
-		removeStatic(pjoin(cfg.jsDir, '**/*.js')),
+		removeStatic(pjoin(cfg.jsDir, '*.js')),
 	]);
 	var as = anysort(globList);
 	return function(a,b){ 
@@ -189,7 +191,9 @@ var jsFiles = function() {
 		return gulp.src(cfg.appFiles.tpl); 
 	},
 	tplBuildTasks = lazypipe()
-		              .pipe(ngHtml2js, {moduleName: 'templates'})
+		              .pipe(function() {
+		              	return _if('**/*.jade', jade(cfg.taskOptions.jadeClient))
+		              })
 	                .pipe(gulp.dest, pjoin(cfg.buildDir, cfg.jsDir, cfg.templatesDir));
 
 //noinspection FunctionWithInconsistentReturnsJS
@@ -251,6 +255,7 @@ var styleFiles = function() {
 	styleBaseTasks = lazypipe()
 		// .pipe(recess, cfg.taskOptions.recess)
 		.pipe(function() {
+			console.log(cfg.taskOptions.stylus);
 			return _if('**/*.styl', stylus(cfg.taskOptions.stylus));
 		})
 		.pipe(function() {
@@ -335,14 +340,14 @@ gulp.task('watch', function() {
 		.pipe(serverBuildTasks());
 
 
-	// watch({glob: cfg.watchFiles.tpl, emitOnGlob: false, name: 'Templates'})
-	// 				.pipe(plumber())
-	// 				.pipe(tplBuildTasks())
+	watch({glob: cfg.watchFiles.tpl, emitOnGlob: false, name: 'Templates'})
+		.pipe(plumber())
+		.pipe(tplBuildTasks())
 	// 				.pipe(livereload(server));
 
-	// watch({glob: cfg.watchFiles.html, emitOnGlob: false, name: 'HTML'}, function() {
-	// 	return buildHTML();
-	// });
+	watch({glob: cfg.watchFiles.html, emitOnGlob: false, name: 'HTML'}, function() {
+		runSequence('build-html');
+	});
 	
 	watch({glob: cfg.watchFiles.styles, emitOnGlob: false, name: 'Styles'}, function() {
 		// run this way to ensure that a failed pipe doesn't break the watcher.

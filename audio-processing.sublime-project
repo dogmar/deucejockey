@@ -6,12 +6,13 @@
 			[
 				".tmp",
 				"node_modules",
-				"built"
+				"built",
+				"bower_components"
 			],
 			"path": "./"
 		},
 		{
-			"path": "../johnny-five/lib"
+			// "path": "../johnny-five/lib"
 		}
 	]
 }

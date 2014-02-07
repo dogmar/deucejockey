@@ -16,7 +16,7 @@ var join = require('path').join,
 	compileDir = 'compiled',
 	srcDir = 'src',
 	staticDir = 'static'
-	templatesDir = '/templates',
+	templatesDir = 'templates',
 	indexFile = join(staticDir,'index.html'),
 	jsDir = join(staticDir,'scripts'),
 	vendorDir = join(jsDir, 'lib'),
@@ -71,6 +71,12 @@ module.exports = {
 		jade: {
 			pretty: true
 		},
+		jadeClient: {
+			client: true,
+			// locals: {myLocal:'this is custom stuff'},
+			// compileDebug: true,
+			// namespace: 'app.templates'
+		},
 		jshint: {
 			"bitwise": true,
 			"devel": true,
@@ -101,6 +107,10 @@ module.exports = {
 		less: {},
 		stylus: {
 			'include-css': true,
+			'include css': true,
+			'includeCss': true,
+			'includecss': true,
+			'includeCSS': true,
 			use: ['nib']
 		},
 		recess: {
@@ -138,8 +148,7 @@ module.exports = {
 			'!'+join(buildDir, vendorDir, '**/*.js')
 		],
 		tpl: [
-			srcDir+'/app/**/*.tpl.html',
-			srcDir+'/common/**/*.tpl.html'
+			join(srcDir, templatesDir, '**/*.*'),
 		],
 		html: join(srcDir, staticDir, 'index.jade'),
 		styles: [
@@ -164,13 +173,10 @@ module.exports = {
 		],
 		//jsunit: [ srcDir+'/**/*.spec.js' ], // watch is handled by the karma plugin!
 		tpl: [
-			srcDir+'/app/**/*.tpl.html',
-			srcDir+'/common/**/*.tpl.html'
+			join(srcDir, templatesDir, '**/*.*'),
 		],
 		html: [ 
-			join(buildDir, '**/*'), 
-			'!'+join(buildDir,indexFile), 
-			join('src',indexFile) 
+			join(srcDir, staticDir, 'index.jade')
 		],
 		styles: [ 
 			join(srcDir, cssDir, '**/*.{styl,css,less}')
@@ -205,8 +211,21 @@ module.exports = {
 	 */
 	vendorFiles: {
 		js: [
+			join(bowerrc.directory, 'jquery/jquery.js'),
+			join(bowerrc.directory, 'underscore/underscore.js'),
+			join(bowerrc.directory, 'jade/runtimes.js'),
 			join(bowerrc.directory, 'backbone/backbone.js'),
-			join(bowerrc.directory, 'jquery/jquery.js')
+			join(bowerrc.directory, 'backbone.localStorage/backbone.localstorage.js'),
+			// join(bowerrc.directory, 'numeric/lib/numeric.js'),
+			// join(bowerrc.directory, 'ccv/js/ccv.js'),
+			// join(bowerrc.directory, 'ccv/face.js'),
+			// join(bowerrc.directory, 'clmtrackr/clmtrackr.js'),
+			// join(bowerrc.directory, '.js'),
+			join(bowerrc.directory, 'stats.js/build/stats.min.js'),
+			join(bowerrc.directory, 'clmtrackr/js/utils.js'),
+			join(bowerrc.directory, 'clmtrackr/clmtrackr.min.js'),
+			join(bowerrc.directory, 'clmtrackr/models/model_pca_20_svm.js'),
+			join(bowerrc.directory, 'todomvc-common/base.js')
 		],
 		assets: [
 		]
