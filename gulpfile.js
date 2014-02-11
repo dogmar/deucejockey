@@ -2,6 +2,7 @@
 
 // TODO: figure out the best way to make gulp a dep of itself
 var gulp = require('gulp'),
+	amd = require('gulp-wrap-amd'),
 	autoprefixer = require('gulp-autoprefixer'),
 	bowerFiles = require('gulp-bower-files'),
 	concat = require('gulp-concat'),
@@ -126,7 +127,6 @@ gulp.task('build-html', ['build-html-temp'], function() {
 		.pipe(tap(function(file) {
 			var newHtmlFile = file.contents.toString();
 			if(newHtmlFile !== htmlFile) {
-				console.log(newHtmlFile);
 				htmlFile = newHtmlFile;
 				console.log('index changed');
 				// gulp.src(file.path).pipe(livereload(server));
@@ -194,6 +194,7 @@ var jsFiles = function() {
 		              .pipe(function() {
 		              	return _if('**/*.jade', jade(cfg.taskOptions.jadeClient))
 		              })
+		              .pipe(amd, {deps: ['jade'], params:['jade']})
 	                .pipe(gulp.dest, pjoin(cfg.buildDir, cfg.jsDir, cfg.templatesDir));
 
 //noinspection FunctionWithInconsistentReturnsJS

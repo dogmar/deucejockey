@@ -17,7 +17,8 @@
     "clmtrackr": "https://github.com/auduno/clmtrackr.git#dev",
     "ractive": "~0.3.9",
     "stats.js": "https://github.com/mrdoob/stats.js.git",
-    "jade": "~1.1.5"
+    "jade": "~1.1.5",
+    "ractive-backbone": "~0.1.0"
   },
   "devDependencies": {}
 }

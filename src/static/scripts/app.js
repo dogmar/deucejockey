@@ -9,6 +9,5 @@ $(function () {
 
 	// kick things off by creating the `App`
 	// Create our global collection of **Todos**.
-	app.faces = new Faces();
 	new app.AppView();
 });

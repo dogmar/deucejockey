@@ -216,6 +216,8 @@ module.exports = {
 			join(bowerrc.directory, 'jade/runtimes.js'),
 			join(bowerrc.directory, 'backbone/backbone.js'),
 			join(bowerrc.directory, 'backbone.localStorage/backbone.localstorage.js'),
+			join(bowerrc.directory, 'ractive/Ractive.js'),
+			join(bowerrc.directory, 'ractive-backbone/Ractive-Backbone.js'),
 			// join(bowerrc.directory, 'numeric/lib/numeric.js'),
 			// join(bowerrc.directory, 'ccv/js/ccv.js'),
 			// join(bowerrc.directory, 'ccv/face.js'),

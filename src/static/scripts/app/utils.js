@@ -27,20 +27,20 @@ window.cancelRequestAnimFrame = (function() {
 })();
 
 // video support utility functions
-function supports_video() {
+function supportsVideo() {
 	return !!document.createElement('video').canPlayType;
 }
 
-function supports_h264_baseline_video() {
-	if (!supports_video()) {
+function supportsH264BaselineVideo() {
+	if (!supportsVideo()) {
 		return false;
 	}
 	var v = document.createElement("video");
 	return v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
 }
 
-function supports_ogg_theora_video() {
-	if (!supports_video()) {
+function supportsOggTheoraVideo() {
+	if (!supportsVideo()) {
 		return false;
 	}
 	var v = document.createElement("video");

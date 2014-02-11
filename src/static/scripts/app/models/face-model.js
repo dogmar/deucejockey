@@ -12,6 +12,7 @@ var app = app || {};
 		// Default attributes for the todo
 		// and ensure that each todo created has `title` and `completed` keys.
 		defaults: {
+			height: 1,
 			eyebrows: {
 				left: {
 					height: 0.5,
