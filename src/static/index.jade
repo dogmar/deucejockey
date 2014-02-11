@@ -9,10 +9,8 @@ html
 		#content
 			h2 Facetracking example
 			#container.video-container
-				video#videoel(width='400', height='300', preload='auto', loop='')
-					// <video id="videoel" width="320" height="240" preload="auto">
-					// <source src="./media/franck.ogv" type="video/ogg"/>
-				canvas#overlay(width='400', height='300')
+				video#videoel(width='640', height='480', preload='auto', loop='')
+				canvas#overlay(width='640', height='480')
 			br
 			input#startbutton.btn(type='button', value='wait, loading video', disabled='disabled')
 			input#resetbutton.btn(type='button', value='reset')
@@ -22,8 +20,8 @@ html
 					='{{#faces}}'
 						li
 							p='Face height: {{height}}'
-							p='Left: {{Math.floor(eyebrows.left.height * 1000) * 0.01}}%'
-							p='Right: {{Math.floor(eyebrows.right.height * 1000) * 0.01}}%'
+							p='Left: {{(eyebrows.left.height * 100).toFixed(2)}}%'
+							p='Right: {{(eyebrows.right.height * 100).toFixed(2)}}%'
 					='{{/faces}}'
 			#text
 				p

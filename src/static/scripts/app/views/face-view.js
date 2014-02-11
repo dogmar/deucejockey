@@ -191,7 +191,7 @@ function pointDistance(x1, y1, x2, y2) {
 			var pos = ctrack.getCurrentPosition(),
 				faceHeight, rBrow, lBrow;
 			requestAnimFrame(drawLoop);
-			overlayCC.clearRect(0, 0, 400, 300);
+			overlayCC.clearRect(0, 0, 640, 480);
 			//psrElement.innerHTML = 'score :' + ctrack.getScore().toFixed(4);
 			if (pos) {
 				ctrack.draw(overlay);
