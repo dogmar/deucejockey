@@ -4,7 +4,11 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "napa"
+  },
+  "napa": {
+    "stats.js": "mrdoob/stats.js#r11"
   },
   "repository": {
     "type": "git",
@@ -18,10 +22,14 @@
     "johnny-five": "~0.7.15",
     "socket.io": "~0.9.16",
     "jade": "~1.1.5",
-    "express": "~3.4.8",
-    "backbone": "~1.1.0"
+    "express": "~3.4.8"
   },
   "devDependencies": {
+    "backbone": "~1.1.0",
+    "underscore": "~1.5.2",
+    "jquery": "~2.1.0",
+    "backbone.iobind": "~0.4.6",
+    "ractive": "~0.3.9",
     "nib": "~1.0.2",
     "gulp": "~3.5.1",
     "gulp-concat": "~2.1.7",
@@ -32,7 +40,6 @@
     "gulp-autoprefixer": "0.0.6",
     "autoprefixer-stylus": "0.0.3",
     "gulp-util": "~2.2.13",
-    "underscore": "~1.5.2",
     "gulp-clean": "~0.2.4",
     "gulp-if": "0.0.4",
     "gulp-filter": "~0.2.1",
@@ -57,6 +64,7 @@
     "gulp-livereload": "~0.3.2",
     "gulp-embedlr": "~0.5.2",
     "gulp-tap": "~0.1.1",
-    "gulp-browserify": "~0.4.2"
+    "gulp-browserify": "~0.4.4",
+    "napa": "~0.3.0"
   }
 }

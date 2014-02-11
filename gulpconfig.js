@@ -215,6 +215,8 @@ module.exports = {
 			join(bowerrc.directory, 'underscore/underscore.js'),
 			join(bowerrc.directory, 'jade/runtimes.js'),
 			join(bowerrc.directory, 'backbone/backbone.js'),
+			join(bowerrc.directory, 'backbone.iobind/dist/backbone.iosync.js'),
+			join(bowerrc.directory, 'backbone.iobind/dist/backbone.iobind.js'),
 			join(bowerrc.directory, 'backbone.localStorage/backbone.localstorage.js'),
 			join(bowerrc.directory, 'ractive/Ractive.js'),
 			join(bowerrc.directory, 'ractive-backbone/Ractive-Backbone.js'),
