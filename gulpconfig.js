@@ -67,6 +67,19 @@ module.exports = {
 	
 	taskOptions: {
 		autoprefixer: ['last 2 version', 'ie 9'],
+		browserify: {
+			"debug": true,
+			shim: {
+				'clm': {
+					path: 'node_modules/clmtrackr/clmtrackr-dev/clmtrackr.min.js',
+					exports: 'clm'
+				},
+				'pmodel': {
+					path: 'node_modules/clmtrackr/clmtrackr-dev/models/model_pca_20_svm.js',
+					exports: 'pModel'
+				}
+			}
+		},
 		csso: false, // set to true to prevent structural modifications
 		jade: {
 			pretty: true
@@ -87,7 +100,7 @@ module.exports = {
 			"forin": true,
 			"immed": true,
 			"indent": 2,
-			"jquery": true,
+			// "jquery": true,
 			"latedef": "nofunc",
 			"newcap": true,
 			"noarg": true,
@@ -101,8 +114,9 @@ module.exports = {
 			"node": true,
 		},
 		jshintBrowser: {
-			"es3": true,
-			"browser": true
+			// "es3": true,
+			"browser": true,
+			"node": true
 		},
 		less: {},
 		stylus: {
@@ -138,8 +152,13 @@ module.exports = {
 			'!'+join(bowerrc.directory, '**/*')
 		],
 		js: [
-			join(srcDir, jsDir, '**/*.js'),
-			'!'+join(srcDir, vendorDir, '**/*')
+			join(srcDir, jsDir, '*.js'),
+			'!' + join(srcDir, jsDir, 'common.js')
+			// '!'+join(srcDir, vendorDir, '**/*'),
+			// '!'+join(srcDir, jsDir, 'app.js')
+		],
+		jsCommon: [
+			join(srcDir, jsDir, 'common.js')
 		],
 		jsunit: [
 			join(buildDir, '/**/*.js'),
@@ -209,29 +228,9 @@ module.exports = {
 	 * with our app's assets. This structure is flattened, so it is not
 	 * recommended that you use wildcards.
 	 */
-	vendorFiles: {
-		js: [
-			join(bowerrc.directory, 'jquery/jquery.js'),
-			join(bowerrc.directory, 'underscore/underscore.js'),
-			join(bowerrc.directory, 'jade/runtimes.js'),
-			join(bowerrc.directory, 'backbone/backbone.js'),
-			join(bowerrc.directory, 'backbone.iobind/dist/backbone.iosync.js'),
-			join(bowerrc.directory, 'backbone.iobind/dist/backbone.iobind.js'),
-			join(bowerrc.directory, 'backbone.localStorage/backbone.localstorage.js'),
-			join(bowerrc.directory, 'ractive/Ractive.js'),
-			join(bowerrc.directory, 'ractive-backbone/Ractive-Backbone.js'),
-			// join(bowerrc.directory, 'numeric/lib/numeric.js'),
-			// join(bowerrc.directory, 'ccv/js/ccv.js'),
-			// join(bowerrc.directory, 'ccv/face.js'),
-			// join(bowerrc.directory, 'clmtrackr/clmtrackr.js'),
-			// join(bowerrc.directory, '.js'),
-			join(bowerrc.directory, 'stats.js/build/stats.min.js'),
-			join(bowerrc.directory, 'clmtrackr/js/utils.js'),
-			join(bowerrc.directory, 'clmtrackr/clmtrackr.min.js'),
-			join(bowerrc.directory, 'clmtrackr/models/model_pca_20_svm.js'),
-			join(bowerrc.directory, 'todomvc-common/base.js')
-		],
-		assets: [
-		]
-	}
+	commonPackages: [
+		'jquery',
+		'underscore',
+		'backbone'
+	],
 };

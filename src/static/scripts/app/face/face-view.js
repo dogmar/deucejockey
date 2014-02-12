@@ -1,6 +1,17 @@
-/*global jQuery, Ractive, requestAnimFrame, pModel, clm*/
-var app = app || {};
+/*global clm, pModel */
 
+var $ = require('jquery'),
+	// Backbone = require('backbone'),
+	Ractive = require('ractive'),
+	Faces = require('./face-collection.js'),
+	utils = require('../utils.js'),
+	app = {};
+
+require('ractive-backbone/Ractive-Backbone.js');
+var clm = require('clm');
+var pModel = require('pmodel');
+// require('clmtrackr/clmtrackr-dev/clmtrackr.min.js');
+// require('clmtrackr/clmtrackr-dev/models/model_pca_20_svm.js');
 
 function checkLineIntersection(line1StartX, line1StartY, line1EndX, line1EndY, line2StartX, line2StartY, line2EndX, line2EndY) {
 	// if the lines intersect, the result contains the x and y of the intersection (treating the lines as infinite) and booleans for whether line segment 1 or line segment 2 contain the point
@@ -48,9 +59,9 @@ function pointDistance(x1, y1, x2, y2) {
 	return Math.sqrt((yD * yD) + (xD * xD));
 }
 
-(function($) {
+(function() {
 	'use strict';
-	app.faces = new app.Faces();
+	app.faces = new Faces();
 
 	console.log('app length:', app.faces.length);
 	app.faces.fetch();
@@ -190,7 +201,7 @@ function pointDistance(x1, y1, x2, y2) {
 		function drawLoop() {
 			var pos = ctrack.getCurrentPosition(),
 				faceHeight, rBrow, lBrow;
-			requestAnimFrame(drawLoop);
+			window.requestAnimFrame(drawLoop);
 			overlayCC.clearRect(0, 0, 640, 480);
 			//psrElement.innerHTML = 'score :' + ctrack.getScore().toFixed(4);
 			if (pos) {
@@ -221,4 +232,4 @@ function pointDistance(x1, y1, x2, y2) {
 
 	})();
 
-})(jQuery);
+})();

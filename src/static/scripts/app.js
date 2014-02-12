@@ -1,13 +1,9 @@
-/*global $ */
-/*jshint unused:false */
-var app = app || {};
-var ENTER_KEY = 13;
-var ESC_KEY = 27;
+var $ = require('jquery');
 
 $(function () {
 	'use strict';
 
-	// kick things off by creating the `App`
-	// Create our global collection of **Todos**.
-	new app.AppView();
+	require('./app/face/face-view');
 });
+
+$('body').append('stuff');

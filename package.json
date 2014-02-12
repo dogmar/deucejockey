@@ -8,7 +8,8 @@
     "install": "napa"
   },
   "napa": {
-    "stats.js": "mrdoob/stats.js#r11"
+    "stats.js": "mrdoob/stats.js",
+    "clmtrackr": "auduno/clmtrackr#dev"
   },
   "repository": {
     "type": "git",
@@ -65,6 +66,8 @@
     "gulp-embedlr": "~0.5.2",
     "gulp-tap": "~0.1.1",
     "gulp-browserify": "~0.4.4",
-    "napa": "~0.3.0"
+    "napa": "~0.3.0",
+    "backbone.localstorage": "~1.1.7",
+    "ractive-backbone": "~0.1.0"
   }
 }

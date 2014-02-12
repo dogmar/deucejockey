@@ -27,22 +27,22 @@ window.cancelRequestAnimFrame = (function() {
 })();
 
 // video support utility functions
-function supportsVideo() {
+module.exports.supportsVideo = function() {
 	return !!document.createElement('video').canPlayType;
-}
+};
 
-function supportsH264BaselineVideo() {
-	if (!supportsVideo()) {
+module.exports.supportsH264BaselineVideo = function() {
+	if (!module.exports.supportsVideo()) {
 		return false;
 	}
-	var v = document.createElement("video");
+	var v = document.createElement('video');
 	return v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
-}
+};
 
-function supportsOggTheoraVideo() {
-	if (!supportsVideo()) {
+module.exports.supportsOggTheoraVideo = function() {
+	if (!module.exports.supportsVideo()) {
 		return false;
 	}
-	var v = document.createElement("video");
+	var v = document.createElement('video');
 	return v.canPlayType('video/ogg; codecs="theora, vorbis"');
-}
+};

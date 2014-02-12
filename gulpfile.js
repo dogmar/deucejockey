@@ -5,6 +5,7 @@ var gulp = require('gulp'),
 	amd = require('gulp-wrap-amd'),
 	autoprefixer = require('gulp-autoprefixer'),
 	bowerFiles = require('gulp-bower-files'),
+	browserify = require('gulp-browserify'),
 	concat = require('gulp-concat'),
 	csso = require('gulp-csso'),
 	jade = require('gulp-jade'),
@@ -151,10 +152,10 @@ gulp.task('compile-html', ['compile-html-temp'], function() {
 var fileSorter = (function(){
 	var globList = _.flatten([
 		// JS files are sorted by original vendor order, common, app, then everything else
-		cfg.vendorFiles.js.map(function(f) { 
-			return removeStatic(pjoin(cfg.vendorDir, path.basename(f)));
-		}),
-		removeStatic(pjoin(cfg.jsDir, 'lib/**/*.js')),	   
+		// cfg.vendorFiles.js.map(function(f) { 
+		// 	return removeStatic(pjoin(cfg.vendorDir, path.basename(f)));
+		// }),
+		removeStatic(pjoin(cfg.jsDir, 'common.js')),	   
 		removeStatic(pjoin(cfg.jsDir, 'app/models/**/*.js')),
 		removeStatic(pjoin(cfg.jsDir, 'app/collections/**/*.js')),
 		removeStatic(pjoin(cfg.jsDir, 'app/views/**/*.js')),
@@ -175,18 +176,52 @@ var fileSorter = (function(){
 //---------------------------------------------
 // JavaScript
 //---------------------------------------------
-
-var jsFiles = function() { 
+var browserifyFiles = function() {
 		return gulp.src(cfg.appFiles.js);
 	},
-	jsBaseTasks = lazypipe()
-		            .pipe(plumber)  // jshint won't render parse errors without plumber 
-		            .pipe(function() {
-		            	return jshint(_.extend({}, cfg.taskOptions.jshint, cfg.taskOptions.jshintBrowser));
-		            })
-		            .pipe(jshint.reporter, 'jshint-stylish'),
-	jsBuildTasks = jsBaseTasks
-		.pipe(gulp.dest, pjoin(cfg.buildDir, cfg.jsDir)),
+	browserifyCommonFiles = function() {
+		return gulp.src(cfg.appFiles.jsCommon);
+	};
+
+gulp.task('build-scripts-browserify', ['build-browserify-app', 'build-browserify-common']);
+
+gulp.task('build-browserify-app', function() {
+	return browserifyFiles()
+		.pipe(browserify(cfg.taskOptions.browserify))
+		.on('prebundle', function(bundle) {
+			for (var i = 0; i < cfg.commonPackages.length; ++i) {
+				bundle.external(cfg.commonPackages[i]);
+			}
+		})
+		.pipe(gulp.dest(pjoin(cfg.buildDir, jsDir)));
+});
+
+gulp.task('build-browserify-common', function() {
+	return browserifyCommonFiles()
+		.pipe(browserify(cfg.taskOptions.browserify))
+		.on('prebundle', function(bundle) {
+			for (var i = 0; i < cfg.commonPackages.length; ++i) {
+				bundle.require(cfg.commonPackages[i]);
+			}
+		})
+		.pipe(gulp.dest(pjoin(cfg.buildDir, jsDir)));
+});
+
+gulp.task('jshint', function(){
+	return jsFiles().pipe(jsHintTasks());
+});
+
+var jsFiles = function() { 
+		return gulp.src(cfg.watchFiles.js);
+	},
+	jsHintTasks = lazypipe()
+		.pipe(plumber)  // jshint won't render parse errors without plumber 
+		.pipe(function() {
+			return jshint(_.extend({}, cfg.taskOptions.jshint, cfg.taskOptions.jshintBrowser));
+		})
+		.pipe(jshint.reporter, 'jshint-stylish'),
+
+
 	tplFiles = function() { 
 		return gulp.src(cfg.appFiles.tpl); 
 	},
@@ -197,20 +232,10 @@ var jsFiles = function() {
 		              .pipe(amd, {deps: ['jade'], params:['jade']})
 	                .pipe(gulp.dest, pjoin(cfg.buildDir, cfg.jsDir, cfg.templatesDir));
 
-//noinspection FunctionWithInconsistentReturnsJS
-gulp.task('build-scripts-vendor', function() {
-	if(cfg.vendorFiles.js.length) {
-		return gulp.src(cfg.vendorFiles.js)
-			.pipe(gulp.dest(pjoin(cfg.buildDir, cfg.vendorDir)))
-	}
-});
-gulp.task('build-scripts-app', function() {
-	return jsFiles().pipe(jsBuildTasks());
-});
 gulp.task('build-scripts-templates', function() {
 	return tplFiles().pipe(tplBuildTasks());
 });
-gulp.task('build-scripts', ['build-scripts-vendor', 'build-scripts-app', 'build-scripts-templates']);
+gulp.task('build-scripts', ['jshint', 'build-scripts-browserify']);
 
 
 gulp.task('compile-scripts', function() {
@@ -334,7 +359,7 @@ gulp.task('watch', function() {
 	runSequence('build', 'server');
 	watch({glob: cfg.watchFiles.js, emitOnGlob: false, name: 'JS'})
 		.pipe(plumber())
-		.pipe(jsBuildTasks());
+		.pipe(jsHintTasks());
 		// .pipe(livereload(server));
 	watch({glob: cfg.watchFiles.server, emitOnGlob: false, name: 'Server'})
 		.pipe(plumber())
