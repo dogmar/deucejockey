@@ -1,5 +1,3 @@
-/*global clm, pModel */
-
 var $ = require('jquery'),
 	// Backbone = require('backbone'),
 	Ractive = require('ractive'),

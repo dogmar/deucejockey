@@ -4,13 +4,13 @@
 var gulp = require('gulp'),
 	amd = require('gulp-wrap-amd'),
 	autoprefixer = require('gulp-autoprefixer'),
-	bowerFiles = require('gulp-bower-files'),
+	// bowerFiles = require('gulp-bower-files'),
 	browserify = require('gulp-browserify'),
 	concat = require('gulp-concat'),
 	csso = require('gulp-csso'),
 	jade = require('gulp-jade'),
 	clean = require('gulp-clean'),
-	filter = require('gulp-filter'),
+	// filter = require('gulp-filter'),
 	footer = require('gulp-footer'),
 	_if = require('gulp-if'),
 	gutil = require('gulp-util'),
@@ -18,10 +18,11 @@ var gulp = require('gulp'),
 	header = require('gulp-header'),
 	inject = require('gulp-inject'),
 	jshint = require('gulp-jshint'),
-	livereload = require('gulp-livereload'),
-	livereloadEmbed = require('gulp-embedlr'),
+	// livereload = require('gulp-livereload'),
+	// livereloadEmbed = require('gulp-embedlr'),
 	minifyHtml = require('gulp-minify-html'),
 	plumber = require('gulp-plumber'),
+	rename = require('gulp-rename'),
 	rev = require('gulp-rev'),
 	runSequence = require('run-sequence'),
 	stripDebug = require('gulp-strip-debug'),
@@ -37,8 +38,8 @@ var gulp = require('gulp'),
 	fs = require('fs'),
 	lazypipe = require('lazypipe'),
 	path = require('path'),
-	pjoin = path.join,
-	sys = require('sys');
+	pjoin = path.join;
+	// sys = require('sys');
 
 // var testFiles = 'test/*.js';
 // var codeFiles = ['./*.js', './lib/*.js', testFiles];
@@ -50,7 +51,7 @@ var cfg = require('./gulpconfig.js');
 // common variables
 var concatName = cfg.pkg.name;
 
-var embedLR = false;
+// var embedLR = false;
 
 
 function readFile(filename) {
@@ -63,16 +64,16 @@ function readFile(filename) {
 //---------------------------------------------
 
 var serverFiles = function() {
-		return gulp.src(cfg.appFiles.jsServer);
-	},
-	serverBaseTasks = lazypipe()
-		                .pipe(plumber)  // jshint won't render parse errors without plumber 
-		                .pipe(function() {
-		                	return jshint(_.extend({}, cfg.taskOptions.jshint, cfg.taskOptions.jshintServer));
-		                })
-		                .pipe(jshint.reporter, 'jshint-stylish'),
-	serverBuildTasks = serverBaseTasks
-	                   .pipe(gulp.dest, pjoin(cfg.buildDir));
+	return gulp.src(cfg.appFiles.jsServer);
+};
+var serverBaseTasks = lazypipe()
+	.pipe(plumber)
+	.pipe(function() {
+		return jshint(_.extend({}, cfg.taskOptions.jshint, cfg.taskOptions.jshintServer));
+	})
+	.pipe(jshint.reporter, 'jshint-stylish');
+var serverBuildTasks = serverBaseTasks
+	.pipe(gulp.dest, pjoin(cfg.buildDir));
 
 gulp.task('build-server', function() {
 	return serverFiles().pipe(serverBuildTasks());
@@ -85,6 +86,31 @@ gulp.task('build-server', function() {
 // HTML
 //---------------------------------------------
 
+var removeStatic = function(pathName) {
+	return path.relative(cfg.staticDir, pathName);
+};
+
+// used by build-html to ensure correct file order during builds
+var fileSorter = (function(){
+	var globList = _.flatten([
+		// JS files are sorted by original vendor order, common, app, then everything else
+		// cfg.vendorFiles.js.map(function(f) { 
+		// 	return removeStatic(pjoin(cfg.vendorDir, path.basename(f)));
+		// }),
+		removeStatic(pjoin(cfg.jsDir, 'common.js')),
+		removeStatic(pjoin(cfg.jsDir, 'app/models/**/*.js')),
+		removeStatic(pjoin(cfg.jsDir, 'app/collections/**/*.js')),
+		removeStatic(pjoin(cfg.jsDir, 'app/views/**/*.js')),
+		removeStatic(pjoin(cfg.jsDir, 'routers/**/*.js')),
+		removeStatic(pjoin(cfg.jsDir, 'app/**/*.js')),
+		removeStatic(pjoin(cfg.jsDir, '*.js')),
+	]);
+	var as = anysort(globList);
+	return function(a,b) {
+		return as(a.filepath, b.filepath);
+	};
+})();
+
 var buildHTML = function(baseDir) {
 	var src = [
 		pjoin(baseDir, cfg.staticDir, '**/*.*'),
@@ -96,20 +122,21 @@ var buildHTML = function(baseDir) {
 			addRootSlash: false,
 			sort: fileSorter, // see below
 			ignorePath: pjoin('/', cfg.buildDir, cfg.staticDir, '/')
-		}))
+		}));
 };
 
 var buildHTMLTemp = function() {
 	return gulp.src(cfg.appFiles.html)
-		.pipe(jade(cfg.taskOptions.jade))
+		.pipe(jade(cfg.taskOptions.jade));
 		// .on('error', function() {
 		// 	gutil.log(gutil.colors.red('Error')+' processing Less files.');
 		// });
 };
 
-var removeStatic = function(pathName) {
-	return path.relative(cfg.staticDir, pathName);
-};
+
+
+
+
 
 gulp.task('build-html-temp', function() {
 	return buildHTMLTemp()
@@ -148,26 +175,7 @@ gulp.task('compile-html', ['compile-html-temp'], function() {
 		.pipe(gulp.dest(cfg.compileDir));
 });
 
-// used by build-html to ensure correct file order during builds
-var fileSorter = (function(){
-	var globList = _.flatten([
-		// JS files are sorted by original vendor order, common, app, then everything else
-		// cfg.vendorFiles.js.map(function(f) { 
-		// 	return removeStatic(pjoin(cfg.vendorDir, path.basename(f)));
-		// }),
-		removeStatic(pjoin(cfg.jsDir, 'common.js')),	   
-		removeStatic(pjoin(cfg.jsDir, 'app/models/**/*.js')),
-		removeStatic(pjoin(cfg.jsDir, 'app/collections/**/*.js')),
-		removeStatic(pjoin(cfg.jsDir, 'app/views/**/*.js')),
-		removeStatic(pjoin(cfg.jsDir, 'routers/**/*.js')),
-		removeStatic(pjoin(cfg.jsDir, 'app/**/*.js')),
-		removeStatic(pjoin(cfg.jsDir, '*.js')),
-	]);
-	var as = anysort(globList);
-	return function(a,b){ 
-		return as(a.filepath, b.filepath) 
-	};
-})();
+
 
 
 
@@ -193,7 +201,7 @@ gulp.task('build-browserify-app', function() {
 				bundle.external(cfg.commonPackages[i]);
 			}
 		})
-		.pipe(gulp.dest(pjoin(cfg.buildDir, jsDir)));
+		.pipe(gulp.dest(pjoin(cfg.buildDir, cfg.jsDir)));
 });
 
 gulp.task('build-browserify-common', function() {
@@ -204,33 +212,35 @@ gulp.task('build-browserify-common', function() {
 				bundle.require(cfg.commonPackages[i]);
 			}
 		})
-		.pipe(gulp.dest(pjoin(cfg.buildDir, jsDir)));
+		.pipe(gulp.dest(pjoin(cfg.buildDir, cfg.jsDir)));
 });
+
+
+
+var jsFiles = function() {
+	return gulp.src(cfg.watchFiles.js);
+};
+
+var jsHintTasks = lazypipe()
+	// need plumber or jshint won't render parse errors
+	.pipe(plumber)
+	.pipe(function() {
+		return jshint(_.extend({}, cfg.taskOptions.jshint, cfg.taskOptions.jshintBrowser));
+	})
+	.pipe(jshint.reporter, 'jshint-stylish');
+var tplFiles = function() {
+	return gulp.src(cfg.appFiles.tpl);
+};
+var tplBuildTasks = lazypipe()
+	.pipe(function() {
+		return _if('**/*.jade', jade(cfg.taskOptions.jadeClient));
+	})
+	.pipe(amd, {deps: ['jade'], params:['jade']})
+	.pipe(gulp.dest, pjoin(cfg.buildDir, cfg.jsDir, cfg.templatesDir));
 
 gulp.task('jshint', function(){
-	return jsFiles().pipe(jsHintTasks());
+	return jsFiles().pipe(gulp.src('./*.js')).pipe(jsHintTasks());
 });
-
-var jsFiles = function() { 
-		return gulp.src(cfg.watchFiles.js);
-	},
-	jsHintTasks = lazypipe()
-		.pipe(plumber)  // jshint won't render parse errors without plumber 
-		.pipe(function() {
-			return jshint(_.extend({}, cfg.taskOptions.jshint, cfg.taskOptions.jshintBrowser));
-		})
-		.pipe(jshint.reporter, 'jshint-stylish'),
-
-
-	tplFiles = function() { 
-		return gulp.src(cfg.appFiles.tpl); 
-	},
-	tplBuildTasks = lazypipe()
-		              .pipe(function() {
-		              	return _if('**/*.jade', jade(cfg.taskOptions.jadeClient))
-		              })
-		              .pipe(amd, {deps: ['jade'], params:['jade']})
-	                .pipe(gulp.dest, pjoin(cfg.buildDir, cfg.jsDir, cfg.templatesDir));
 
 gulp.task('build-scripts-templates', function() {
 	return tplFiles().pipe(tplBuildTasks());
@@ -240,15 +250,15 @@ gulp.task('build-scripts', ['jshint', 'build-scripts-browserify']);
 
 gulp.task('compile-scripts', function() {
 	var appFiles = jsFiles()
-					.pipe(jsBaseTasks())
-					.pipe(concat('appFiles.js')) // not used
-					.pipe(ngmin())
+					// .pipe(jsBaseTasks())
+					// .pipe(concat('appFiles.js')) // not used
+					// .pipe(ngmin())
 					.pipe(header(readFile('module.prefix')))
 					.pipe(footer(readFile('module.suffix')));
 
 	var templates = tplFiles()
 					.pipe(minifyHtml({empty: true, spare: true, quotes: true}))
-					.pipe(ngHtml2js({moduleName: 'templates'}))
+					// .pipe(ngHtml2js({moduleName: 'templates'}))
 					.pipe(concat('templates.min.js')); // not used
 	
 	var files = [appFiles, templates];
@@ -263,7 +273,7 @@ gulp.task('compile-scripts', function() {
 					.pipe(rev())
 					.pipe(gulp.dest(pjoin(cfg.compileDir, cfg.jsDir)))
 					.pipe(gzip())
-					.pipe(gulp.dest(pjoin(cfg.compileDir, cfg.jsDir)))
+					.pipe(gulp.dest(pjoin(cfg.compileDir, cfg.jsDir)));
 });
 
 
@@ -274,9 +284,9 @@ gulp.task('compile-scripts', function() {
 //---------------------------------------------
 // Less / CSS Styles
 //---------------------------------------------
-var stylesSrc = cfg.appFiles.styles
-var styleFiles = function() { 
-		return gulp.src(stylesSrc); 
+var stylesSrc = cfg.appFiles.styles;
+var styleFiles = function() {
+		return gulp.src(stylesSrc);
 	},
 	styleBaseTasks = lazypipe()
 		// .pipe(recess, cfg.taskOptions.recess)
@@ -292,15 +302,15 @@ var styleFiles = function() {
 		}),
 	buildStyles = function() {
 		return styleFiles()
-					.pipe(
-						styleBaseTasks()
-						// need to manually catch errors on stylus? :-(
-						.on('error', function() {
-							util.log(gutil.colors.red('Error')+' processing Stylus files.');
-						})
-					)
-					.pipe(gulp.dest(pjoin(cfg.buildDir, cfg.cssDir)))
-					// .pipe(livereload(server))
+			.pipe(
+				styleBaseTasks()
+				// need to manually catch errors on stylus? :-(
+				.on('error', function() {
+					gutil.log(gutil.colors.red('Error')+' processing Stylus files.');
+				})
+			)
+			.pipe(gulp.dest(pjoin(cfg.buildDir, cfg.cssDir)));
+			// .pipe(livereload(server))
 	};
 
 gulp.task('build-styles', function() {
@@ -314,7 +324,7 @@ gulp.task('compile-styles', function() {
 					.pipe(rev())
 					.pipe(gulp.dest(pjoin(cfg.compileDir, cfg.cssDir)))
 					.pipe(gzip())
-					.pipe(gulp.dest(pjoin(cfg.compileDir, cfg.cssDir)))
+					.pipe(gulp.dest(pjoin(cfg.compileDir, cfg.cssDir)));
 });
 
 
@@ -364,11 +374,14 @@ gulp.task('watch', function() {
 	watch({glob: cfg.watchFiles.server, emitOnGlob: false, name: 'Server'})
 		.pipe(plumber())
 		.pipe(serverBuildTasks());
+	watch({glob: './*.js', emitOnGlob: false, name: 'Gulpfiles'})
+		.pipe(plumber())
+		.pipe(jsHintTasks());
 
 
 	watch({glob: cfg.watchFiles.tpl, emitOnGlob: false, name: 'Templates'})
 		.pipe(plumber())
-		.pipe(tplBuildTasks())
+		.pipe(tplBuildTasks());
 	// 				.pipe(livereload(server));
 
 	watch({glob: cfg.watchFiles.html, emitOnGlob: false, name: 'HTML'}, function() {

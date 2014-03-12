@@ -6,25 +6,19 @@ var join = require('path').join,
 	bowerrc = JSON.parse(require('fs').readFileSync('./.bowerrc', {encoding: 'utf8'})),
 	bower = require(bowerrc.json.replace(/^\.?\/?/, './')),
 	pkg = require('./package.json'),
-	
-	/**
-	 * The `buildDir` folder is where our projects are compiled during
-	 * development and the `compileDir` folder is where our app resides once it's
-	 * completely built.
-	 */	
 	buildDir = 'built',
 	compileDir = 'compiled',
 	srcDir = 'src',
-	staticDir = 'static'
+	staticDir = 'static',
 	templatesDir = 'templates',
 	indexFile = join(staticDir,'index.html'),
 	jsDir = join(staticDir,'scripts'),
 	vendorDir = join(jsDir, 'lib'),
 	cssDir = join(staticDir,'style'),
 	assetsDir = join(staticDir,'assets'),
-	htmlDir = join(staticDir,''),
-	serverEntry = 'main.js'
-	tempDir = 'tmp'
+	// htmlDir = join(staticDir,''),
+	serverEntry = 'main.js',
+	tempDir = 'tmp';
 
 module.exports = {
 	srcDir: srcDir,
@@ -68,7 +62,7 @@ module.exports = {
 	taskOptions: {
 		autoprefixer: ['last 2 version', 'ie 9'],
 		browserify: {
-			"debug": true,
+			'debug': true,
 			shim: {
 				'clm': {
 					path: 'node_modules/clmtrackr/clmtrackr-dev/clmtrackr.min.js',
@@ -91,32 +85,32 @@ module.exports = {
 			// namespace: 'app.templates'
 		},
 		jshint: {
-			"bitwise": true,
-			"devel": true,
-			"camelcase": true,
-			"curly": true,
-			"eqeqeq": true,
-			"eqnull": true,
-			"forin": true,
-			"immed": true,
-			"indent": 2,
-			// "jquery": true,
-			"latedef": "nofunc",
-			"newcap": true,
-			"noarg": true,
-			"quotmark": "single",
-			"smarttabs": true,
-			"trailing": true,
-			"undef": true,
-			"unused": true
+			'bitwise': true,
+			'devel': true,
+			'camelcase': true,
+			'curly': true,
+			'eqeqeq': true,
+			'eqnull': true,
+			'forin': true,
+			'immed': true,
+			'indent': 2,
+			// 'jquery': true,
+			'latedef': 'nofunc',
+			'newcap': true,
+			'noarg': true,
+			'quotmark': 'single',
+			'smarttabs': true,
+			'trailing': true,
+			'undef': true,
+			'unused': true
 		},
 		jshintServer: {
-			"node": true,
+			'node': true,
 		},
 		jshintBrowser: {
-			// "es3": true,
-			"browser": true,
-			"node": true
+			// 'es3': true,
+			'browser': true,
+			'node': true
 		},
 		less: {},
 		stylus: {
@@ -194,10 +188,10 @@ module.exports = {
 		tpl: [
 			join(srcDir, templatesDir, '**/*.*'),
 		],
-		html: [ 
+		html: [
 			join(srcDir, staticDir, 'index.jade')
 		],
-		styles: [ 
+		styles: [
 			join(srcDir, cssDir, '**/*.{styl,css,less}')
 		],
 		assets: join('src',assetsDir,'**/*.*')

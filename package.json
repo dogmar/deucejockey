@@ -23,7 +23,8 @@
     "johnny-five": "~0.7.15",
     "socket.io": "~0.9.16",
     "jade": "~1.1.5",
-    "express": "~3.4.8"
+    "express": "~3.4.8",
+    "gulp-rename": "^1.2.0"
   },
   "devDependencies": {
     "backbone": "~1.1.0",
