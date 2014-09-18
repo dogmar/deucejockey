@@ -5,9 +5,7 @@
 			"folder_exclude_patterns":
 			[
 				".tmp",
-				"node_modules",
-				"built",
-				"bower_components"
+				"node_modules"
 			],
 			"file_exclude_patterns":
 			[

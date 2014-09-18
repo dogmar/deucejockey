@@ -1,0 +1,10 @@
+README.rst
+setup.py
+slowclap/__init__.py
+slowclap/record.py
+slowclap.egg-info/PKG-INFO
+slowclap.egg-info/SOURCES.txt
+slowclap.egg-info/dependency_links.txt
+slowclap.egg-info/entry_points.txt
+slowclap.egg-info/requires.txt
+slowclap.egg-info/top_level.txt
