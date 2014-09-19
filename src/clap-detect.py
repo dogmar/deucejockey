@@ -1,4 +1,4 @@
-import clap as sc
+import slowclap as sc
 import httplib
 import sched, time
 
@@ -71,7 +71,7 @@ class ClapDetector(object):
             print "Can't start detector_thread", e
 
         try:
-            self.input_thread = threading.Thread(target=self.read_input)
+            self.input_thread = threading.Thread(target=self.read_keyboard)
             self.input_thread.daemon = True
             self.input_thread.start()
         except Exception as e:
@@ -80,35 +80,48 @@ class ClapDetector(object):
         self.main_loop()
 
 
+    def emit_clap(self, timestamp=None, volume=0):
+        if timestamp is None:
+            timestamp = time.time()
+
+        output = {
+            'clap': {
+                'time': timestamp,
+                'volume': volume
+            }
+        }
+
+        sys.stdout.write(json.dumps(output, sort_keys=True) + '\n')
+        sys.stdout.flush()
+
     def read_detector(self):
         # fo = os.fdopen(3, "w")
 
         print test
         for clap in self.detector:
             print(clap)
-            sys.stdout.flush()
-            output = {
-                'clap': {
-                    'time': clap.time,
-                    'volume': clap.volume.astype(float)
-                }
-            }
-            # fo.write(json.dumps(output, sort_keys=True))
-            # fo.flush()
-            sys.stdout.write(json.dumps(output, sort_keys=True))
-            sys.stdout.flush()
+            self.emit_clap(timestamp=clap.time, volume=clap.volume.astype(float))
+            # output = {
+            #     'clap': {
+            #         'time': clap.time,
+            #         'volume': clap.volume.astype(float)
+            #     }
+            # }
+            # sys.stdout.write(json.dumps(output, sort_keys=True))
+            # sys.stdout.flush()
         print('read_detector_done')
 
+    def threshold_up(self):
+        self.detector.threshold *= 1.2
+        print 'Threshold:', self.detector.threshold
+        sys.stdout.flush()
 
-    def read_input(self):
-        # import curses
-        # stdscr = curses.initscr()
-        # curses.noecho()
-        # curses.cbreak()
-        # stdscr.keypad(1)
+    def threshold_down(self):
+        self.detector.threshold /= 1.2
+        print 'Threshold:', self.detector.threshold
+        sys.stdout.flush()
 
-
-
+    def read_keyboard(self):
         import termios, fcntl, sys, os
         fd = sys.stdin.fileno()
 
@@ -125,12 +138,11 @@ class ClapDetector(object):
                 try:
                     c = sys.stdin.read(1)
                     if (c == 'a' or c == 'A'):
-                        self.detector.threshold *= 1.2
-                        print 'Threshold:', self.detector.threshold
+                        self.threshold_up()
                     elif (c == 'z' or c == 'Z'):
-                        self.detector.threshold /= 1.2
-                        print 'Threshold:', self.detector.threshold
-
+                        self.threshold_down()
+                    elif (c == 'c' or c == 'C'):
+                        self.emit_clap()
                 except IOError: pass
         finally:
             termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)

@@ -32,12 +32,11 @@ WAIT=.5
 
 Chunk = namedtuple('Chunk', 'data time')
 Clap = namedtuple('Clap', ['time', 'volume'])
-ClapEnd = namedtuple('ClapEnd', 'time')
-
 
 class Detector(object):
     def __init__(self, feed):
         self.feed = feed
+        # self.start_time = time.time()
 
     def __iter__(self):
         for c in self.feed:
@@ -112,14 +111,12 @@ class MicrophoneFeed(object):
         self.p = pyaudio.PyAudio()
         self.stream = self.p.open(format=FORMAT, channels=CHANNELS, rate=RATE,
                                   input=True, frames_per_buffer=CHUNK)
-        self.t = 0.0
 
     def __iter__(self):
         while self.enabled:
             data = self.stream.read(CHUNK)
             chunk = np.fromstring(data, 'int16')
-            yield Chunk(chunk, self.t)
-            self.t += CHUNK / RATE
+            yield Chunk(chunk, time.time())
 
     def close(self):
         self.enabled = False
