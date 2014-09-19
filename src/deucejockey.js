@@ -44,7 +44,6 @@ var reqOptions = {
 };
 
 var timeout;
-console.log('running from:', process.cwd());
 
 var resetTime = 1.5 // in seconds
 	, claps = []
@@ -66,7 +65,6 @@ process.on('uncaughtException', function(err) {
 
 spotify.getToken().then(function(token) {
 	for (var i in playlists) {
-		console.log('id', i);
 
 		(function (id) {
 			spotify.getPlaylist(token, playlists[id].uri).then(function(tracks) {
@@ -119,19 +117,14 @@ function countClaps(e) {
 					playlistIdx = 'panama';
 					break;
 				default:
+					claps = [];
 					return;
 					break;
 			}
 
 			trackIdx = Math.floor(Math.random() * playlists[playlistIdx].tracks.length);
-			console.log('trackIdx:', trackIdx);
-			console.log(playlistIdx);
-			console.log(playlists[playlistIdx]);
-			console.log(playlists[playlistIdx].tracks);
-
 
 			command = commands.play + playlists[playlistIdx].tracks[trackIdx].uri;
-			console.log('>>>>>>>COMMAND:', command);
 		}
 
 		requestCommand(command)
@@ -143,7 +136,7 @@ function countClaps(e) {
 function requestCommand(path) {
 		reqOptions.path = path
 		var req = http.request(reqOptions, function(res) {
-			console.log('STATUS: ' + res.statusCode);
+			console.log('Reign request status code: ' + res.statusCode);
 		});
 		req.end();
 }
@@ -157,7 +150,6 @@ function spawnDetector() {
 		detectorProcess = cp.spawn('python', [__dirname+'/clap-detect.py'], {stdio: [process.stdin, 'pipe', process.stderr]});
 		detectorProcess.stdout.on('data', readDetector)
 		console.log('spawning detector', detectorProcess.pid);
-
 	}
 }
 
@@ -182,11 +174,11 @@ function readDetector(buffer) {
 }
 
 
-function detectorProcessClosed() {
-	console.log('closed')
-	detectorProcess = null;
-	// spawnChildren();
-}
+// function detectorProcessClosed() {
+// 	console.log('closed')
+// 	detectorProcess = null;
+// 	// spawnChildren();
+// }
 
 
 try {

@@ -27,7 +27,7 @@ function getToken() {
 	};
 
 	var req = https.request(reqOptions, function(res) {
-		console.log(res.statusCode);
+		console.log('Spotify token request status:', res.statusCode);
 		var body = ''
 		res.on('data', function(chunk) {
 			body += chunk
@@ -51,22 +51,18 @@ function getSpotify(path, token) {
 		path: path,
 		method: 'GET',
 		headers: {
-			// 'Content-Type': 'application/x-www-form-urlencoded',
-			// 'Content-Length': postData.length,
 			'Authorization': 'Bearer ' + token
 		}
 	};
 
 	var req = https.request(reqOptions, function(res) {
-		console.log(res.statusCode);
-		// console.log(res);
+		console.log('Spotify request status:', res.statusCode);
 
 		var body = ''
 		res.on('data', function(chunk) {
 			body += chunk
 		});
 		res.on('end', function() {
-			// console.log(body);
 			try {
 				body = JSON.parse(body);
 			} catch (e) {
@@ -92,15 +88,11 @@ function getPlaylist(token, uri) {
 	uri =  uri.split(':');
 	user = uri[2];
 	playlistID = uri[4];
-	// console.log('user:', user);
-	// console.log('id:', playlistID);
 
 	getSpotify('/v1/users/'+user+'/playlists/'+playlistID, token)
 		.then(function(playlist){
 			var pl = [];
-			// console.log(playlist.tracks.items);
 			playlist.tracks.items.forEach(function(item){
-				// console.log(item.track.name, item.track.uri);
 				pl.push({
 					'name': item.track.name,
 					'uri': item.track.uri
