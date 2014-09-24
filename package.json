@@ -1,18 +1,15 @@
 {
-  "name": "robo-call",
+  "name": "deucejockey",
   "version": "0.0.0",
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "napa"
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.chrisklink.com:experiments/audio-input.git"
+    "url": "https://github.com/dogmar/deucejockey.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Chris Klink",
   "dependencies": {
     "http": "0.0.0",
     "keypress": "^0.2.1",
