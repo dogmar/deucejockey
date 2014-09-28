@@ -8,6 +8,21 @@ var events = require('events')
 ;
 
 
+
+
+var argv = require('yargs')
+		.options('h', {
+			alias: 'host',
+			default: 'localhost'
+		})
+		.options('p', {
+			alias: 'port',
+			default: '52552'
+		})
+		.argv
+
+
+
 playlists = {
 	'three claps': {
 		uri:'spotify:user:chrisklink:playlist:0tnVywWS6zAg3cA4ngJq0Y',
@@ -37,9 +52,8 @@ var commands = {
 }
 
 var reqOptions = {
-	hostname: '10.201.178.52',
-	port: 52552,
-	path: '/next',
+	hostname: argv.host,
+	port: argv.port,
 	method: 'GET'
 };
 
@@ -134,8 +148,8 @@ function countClaps(e) {
 }
 
 function requestCommand(path) {
-		reqOptions.path = path
-		var req = http.request(reqOptions, function(res) {
+		var opts = _.assign({path: path}, reqOptions);
+		var req = http.request(opts, function(res) {
 			console.log('Reign request status code: ' + res.statusCode);
 		});
 		req.end();

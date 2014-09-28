@@ -172,14 +172,15 @@ def main():
     print('[{0}]'.format(1.5e7))
     print(1.5e7)
     parser = _create_option_parser()
+    print '2'
     (options, args) = parser.parse_args(argv)
-
+    print '3'
     detector = ClapDetector(threshold=options.threshold,
                  window=options.window,
                  wait=options.wait)
-
+    print '4'
     detector.detect_claps()
-
+    print '5'
 
 if __name__ == '__main__':
     main()
