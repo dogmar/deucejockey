@@ -55,9 +55,7 @@ test = "test"
 
 class ClapDetector(object):
     def __init__(self, threshold=THRESHOLD, window=WINDOW, wait=WAIT):
-        self.feed = sc.MicrophoneFeed()
-        self.detector = sc.WindowedDetector(self.feed, 
-                                            threshold=threshold,
+        self.detector = sc.WindowedDetector(threshold=threshold,
                                             window=window,
                                             wait=wait)
 
