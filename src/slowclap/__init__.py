@@ -20,7 +20,7 @@ import pyaudio
 import numpy as np
 import time
 
-CHUNK = 512#1024
+CHUNK = 512
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
@@ -37,12 +37,14 @@ class Detector(object):
     def __init__(self):
         self.enabled = True
         self.p = pyaudio.PyAudio()
+
         self.stream = self.p.open(format=FORMAT, channels=CHANNELS, rate=RATE,
                                   input=True, frames_per_buffer=CHUNK)
 
     def __iter__(self):
         while self.enabled:
             # Read data
+            print("abvailable:", self.stream.get_read_available())
             data = self.stream.read(CHUNK)
             # Convert to numpy array
             chunk = np.fromstring(data, 'int16')
@@ -85,7 +87,11 @@ class WindowedDetector(AmplitudeDetector):
 
     def __iter__(self):
         while self.enabled:
-            data = self.stream.read(CHUNK)
+            try:
+                data = self.stream.read(CHUNK)
+            except Exception as e:
+                print('available:', self.stream.get_read_available(), e)
+                continue
             chunk = np.fromstring(data, 'int16')
             cur_time = time.time()
 
@@ -109,9 +115,6 @@ class WindowedDetector(AmplitudeDetector):
                     self.clap_start = None
                     print(Clap(cur_time, self.get_volume(chunk)))
                     yield Clap(cur_time, self.get_volume(chunk))
-
-    # def in_window(self, time):
-    #     return time < self.clap_start + self.window
 
     def clap_has_started(self, chunk):
         return not (elf.clap_start == None)

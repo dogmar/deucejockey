@@ -13,6 +13,8 @@ import os
 
 import threading
 
+from collections import deque
+
 THRESHOLD = 5e6
 WINDOW =.05
 WAIT=.2
@@ -58,6 +60,7 @@ class ClapDetector(object):
         self.detector = sc.WindowedDetector(threshold=threshold,
                                             window=window,
                                             wait=wait)
+        self.claps = deque()
 
     def detect_claps(self):
         print 'detect claps'
@@ -73,41 +76,35 @@ class ClapDetector(object):
             self.input_thread.daemon = True
             self.input_thread.start()
         except Exception as e:
-            print "Can't start detector_thread", e
+            print "Can't start input_thread", e
+
+        try:
+            self.emitter_thread = threading.Thread(target=self.start_emitter)
+            self.emitter_thread.daemon = True
+            self.emitter_thread.start()
+        except Exception as e:
+            print "Can't start emitter_thread", e
 
         self.main_loop()
+
+    def start_emitter(self):
+        while 1:
+            if len(self.claps) > 0:
+                clap = self.claps.popleft()
+                self.emit_clap(timestamp=clap.time, volume=clap.volume)
+            time.sleep(.001)
 
 
     def emit_clap(self, timestamp=None, volume=0):
         if timestamp is None:
             timestamp = time.time()
 
-        output = {
-            'clap': {
-                'time': timestamp,
-                'volume': volume
-            }
-        }
-
-        sys.stdout.write(json.dumps(output, sort_keys=True) + '\n')
-        sys.stdout.flush()
+        print('{"clap": {"time": '+repr(timestamp)+', "volume": '+str(volume)+'}}')
 
     def read_detector(self):
-        # fo = os.fdopen(3, "w")
-
-        print test
+        print ('read_detector starting')
         for clap in self.detector:
-            print(clap)
-            self.emit_clap(timestamp=clap.time, volume=clap.volume.astype(float))
-            # output = {
-            #     'clap': {
-            #         'time': clap.time,
-            #         'volume': clap.volume.astype(float)
-            #     }
-            # }
-            # sys.stdout.write(json.dumps(output, sort_keys=True))
-            # sys.stdout.flush()
-        print('read_detector_done')
+            self.claps.append(clap)
 
     def threshold_up(self):
         self.detector.threshold *= 1.2
@@ -147,17 +144,6 @@ class ClapDetector(object):
             fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
 
-            # try:
-            #     line = sys.stdin.readline()
-            # except KeyboardInterrupt:
-            #     break
-
-            # if not line:
-            #     break
-
-            # print line
-
-
     def main_loop(self):
         while 1:
             time.sleep(1)
@@ -167,18 +153,12 @@ class ClapDetector(object):
 
 def main():
     argv = sys.argv[1:]
-    print('[{0}]'.format(1.5e7))
-    print(1.5e7)
     parser = _create_option_parser()
-    print '2'
     (options, args) = parser.parse_args(argv)
-    print '3'
     detector = ClapDetector(threshold=options.threshold,
                  window=options.window,
                  wait=options.wait)
-    print '4'
     detector.detect_claps()
-    print '5'
 
 if __name__ == '__main__':
     main()
