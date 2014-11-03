@@ -12,9 +12,6 @@
 				"*.sublime-workspace"
 			],
 			"path": "./"
-		},
-		{
-			// "path": "../johnny-five/lib"
 		}
 	]
 }

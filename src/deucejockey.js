@@ -152,6 +152,9 @@ function requestCommand(path) {
 		var req = http.request(opts, function(res) {
 			console.log('Reign request status code: ' + res.statusCode);
 		});
+		req.on('error', function(e) {
+			console.log('Can\'t connect to Reign server: '+e);
+		});
 		req.end();
 }
 
