@@ -67,12 +67,12 @@ class ClapDetector(object):
         except Exception as e:
             print "Can't start detector_thread", e
 
-        try:
-            self.input_thread = threading.Thread(target=self.read_keyboard)
-            self.input_thread.daemon = True
-            self.input_thread.start()
-        except Exception as e:
-            print "Can't start input_thread", e
+        # try:
+        #     self.input_thread = threading.Thread(target=self.read_keyboard)
+        #     self.input_thread.daemon = True
+        #     self.input_thread.start()
+        # except Exception as e:
+        #     print "Can't start input_thread", e
 
         try:
             self.emitter_thread = threading.Thread(target=self.start_emitter)
@@ -128,32 +128,32 @@ class ClapDetector(object):
     def sensitivity_down(self):
         self.set_sensitivity(self.sensitivity - .01)
 
-    def read_keyboard(self):
-        import termios, fcntl, sys, os
-        fd = sys.stdin.fileno()
+    # def read_keyboard(self):
+    #     import termios, fcntl, sys, os
+    #     fd = sys.stdin.fileno()
 
-        oldterm = termios.tcgetattr(fd)
-        newattr = termios.tcgetattr(fd)
-        newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
-        termios.tcsetattr(fd, termios.TCSANOW, newattr)
+    #     oldterm = termios.tcgetattr(fd)
+    #     newattr = termios.tcgetattr(fd)
+    #     newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
+    #     termios.tcsetattr(fd, termios.TCSANOW, newattr)
 
-        oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
-        fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
+    #     oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
+    #     fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
 
-        try:
-            while 1:
-                try:
-                    c = sys.stdin.read(1)
-                    if (c == 'a' or c == 'A'):
-                        self.sensitivity_up()
-                    elif (c == 'z' or c == 'Z'):
-                        self.sensitivity_down()
-                    elif (c == 'c' or c == 'C'):
-                        self.emit_clap()
-                except IOError: pass
-        finally:
-            termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
-            fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
+    #     try:
+    #         while 1:
+    #             try:
+    #                 c = sys.stdin.read(1)
+    #                 if (c == 'a' or c == 'A'):
+    #                     self.sensitivity_up()
+    #                 elif (c == 'z' or c == 'Z'):
+    #                     self.sensitivity_down()
+    #                 elif (c == 'c' or c == 'C'):
+    #                     self.emit_clap()
+    #             except IOError: pass
+    #     finally:
+    #         termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
+    #         fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
     def lcd_loop(self):
         from time import sleep
